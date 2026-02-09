@@ -50,6 +50,6 @@
     enable = true;
     memoryPercent = 25;
   };
-
+  
   system.stateVersion = "25.11";
 }

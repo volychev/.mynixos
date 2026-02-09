@@ -36,7 +36,7 @@
 
     micro 
     vscode-fhs
-    # jetbrains.pycharm
+    jetbrains.pycharm-oss
     # jetbrains.clion
 
     clang

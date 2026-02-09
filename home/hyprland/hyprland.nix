@@ -84,11 +84,6 @@ let
 
     ${pkgs.socat}/bin/socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do
       if [[ "$line" == "workspace>>"* ]]; then
-        if [ -f "${waybar-restore-file}" ]; then
-          $WAYBAR &
-          rm -f "${waybar-restore-file}"
-        fi
-        
         rm -f "${state-file}"
         pkill -P $$
         exit 0
@@ -112,13 +107,6 @@ let
     touch "${state-file}"
     hyprctl dispatch hyprexpo:expo
     expo-watcher &
-  
-    if $PGREP -f "waybar" > /dev/null; then
-      $PKILL waybar
-      touch "${waybar-restore-file}"
-    else
-      rm -f "${waybar-restore-file}"
-    fi
   '';
 
   gesture-down = pkgs.writeShellScriptBin "gesture-down" ''
