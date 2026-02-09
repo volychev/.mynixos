@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let
   touchscreen-innhibit = pkgs.writeShellScriptBin "touchscreen-innhibit" ''
@@ -58,53 +58,110 @@ let
   '';
   
   toggle-cinema = pkgs.writeShellScriptBin "toggle-cinema" ''
-      # Пути к бинарникам
       HYPRCTL="${pkgs.hyprland}/bin/hyprctl"
       WAYBAR="${pkgs.waybar}/bin/waybar"
       PKILL="${pkgs.procps}/bin/pkill"
       PGREP="${pkgs.procps}/bin/pgrep"
 
       if $PGREP -f "waybar" > /dev/null; then
-          # 1. Убиваем панель
           $PKILL waybar
-          
-          # 2. Убираем ВСЕ отступы для воркспейса, где только одно окно
-          # gapsout:0 — убирает те самые отступы от краев экрана до окна
-          # gapsin:0  — на случай, если решишь открыть второе (чтобы не было щелей)
-          $HYPRCTL keyword workspace "f[1], gapsout:0, gapsin:0, border:0, rounding:0"
-          
-          # 3. Принудительное правило для всех окон на таком воркспейсе
-          # Используем универсальный селектор для тайловых окон
-          $HYPRCTL keyword windowrulev2 "bordersize 0, floating:0, onworkspace:f[1]"
-          $HYPRCTL keyword windowrulev2 "rounding 0, floating:0, onworkspace:f[1]"
-          
-          # 4. Чтобы изменения применились мгновенно к уже открытому окну
-          $HYPRCTL dispatch cyclenext > /dev/null
+
+          $HYPRCTL keyword workspace "w[tv1], gapsout:0, gapsin:0, border:false, rounding:false, decorate:false"
+          $HYPRCTL keyword windowrule "match:workspace w[tv1], match:float false, border_size 0"
+          $HYPRCTL keyword keyword windowrule "match:workspace w[tv1], match:float false, no_anim true"
       else
-          # Возврат в обычный режим
           $HYPRCTL reload
           $WAYBAR &
       fi
+  '';
+
+  state-file = "/tmp/hyprexpo.active";
+  waybar-restore-file = "/tmp/waybar.should_restore";
+
+  expo-watcher = pkgs.writeShellScriptBin "expo-watcher" ''
+    HYPRCTL="${pkgs.hyprland}/bin/hyprctl"
+    WAYBAR="${pkgs.waybar}/bin/waybar"
+
+    ${pkgs.socat}/bin/socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do
+      if [[ "$line" == "workspace>>"* ]]; then
+        if [ -f "${waybar-restore-file}" ]; then
+          $WAYBAR &
+          rm -f "${waybar-restore-file}"
+        fi
+        
+        rm -f "${state-file}"
+        pkill -P $$
+        exit 0
+      fi
+    done
+  '';
+
+  gesture-up = pkgs.writeShellScriptBin "gesture-up" ''
+    PGREP="${pkgs.procps}/bin/pgrep"
+    PKILL="${pkgs.procps}/bin/pkill"
+
+    if pgrep -x rofi > /dev/null; then
+      pkill rofi
+      exit 0
+    fi
+
+    if [ -f "${state-file}" ]; then
+      exit 0
+    fi
+
+    touch "${state-file}"
+    hyprctl dispatch hyprexpo:expo
+    expo-watcher &
+  
+    if $PGREP -f "waybar" > /dev/null; then
+      $PKILL waybar
+      touch "${waybar-restore-file}"
+    else
+      rm -f "${waybar-restore-file}"
+    fi
+  '';
+
+  gesture-down = pkgs.writeShellScriptBin "gesture-down" ''
+    if [ -f "${state-file}" ]; then
+      hyprctl dispatch workspace e+1
+    else
+      rofi-launcher
+    fi
   '';
 in
 {
   home.packages = with pkgs; [
     touchscreen-innhibit
     toggle-cinema
+    expo-watcher
+    gesture-up
+    gesture-down
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
     
-    package = pkgs.hyprland; 
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    
+    plugins = [
+      inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
+    ];
 
     settings = {
+      "plugin:hyprexpo" = {
+        columns = 3;             
+        gap_size = 20;           
+        bg_col = "rgb(000000)";  
+
+        workspace_method = "center current"; 
+      };
+
       "$terminal" = "kitty";
       "$fileManager" = "nautilus";
-      "$menuName" = "rofi";
       "$menu" = "rofi-launcher";
-      "$screenshot" = "hyprshot -m region --border-size 0 -o ~/Pictures/Screenshots";
-      "$clipboard" = "rofi-cliboard";
+      # "$screenshot" = "hyprshot -m region --border-size 0 -o ~/Pictures/Screenshots";
+      "$screenshot" = "grim -g \"$(slurp -b 00000066 -c 00000000 -B BFb4faff -w 2)\" - | tee >(wl-copy) | swappy -f -";
+      "$clipboard" = "rofi-clipboard";
       "$mainMod" = "SUPER";
 
       ################
@@ -123,10 +180,13 @@ in
         "QT_QPA_PLATFORM,wayland;xcb"
         "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
         "QT_QPA_PLATFORMTHEME,qt5ct"
+        "SDL_VIDEODRIVER,wayland"
         "LANG,en_US.UTF-8"
         "LC_ALL,en_US.UTF-8"
         "XCURSOR_SIZE,18"
         "HYPRCURSOR_SIZE,18"
+        "WLR_DRM_NO_ATOMIC,1"
+        "MOZ_ENABLE_WAYLAND,1"
       ];
 
       #################
@@ -134,7 +194,6 @@ in
       #################
       "exec-once" = [
         "$terminal"
-        "swaybg -i /etc/nixos/home/hyprland/wallpaper.png -m fill"
         "sudo touchscreen-innhibit"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
@@ -258,8 +317,8 @@ in
 
       "gesture" = [
         "3, horizontal, workspace"
-        "3, down, dispatcher, exec, $menu"
-        "3, up, dispatcher, exec, pkill $menuName"
+        "3, down, dispatcher, exec, gesture-down"
+        "3, up, dispatcher, exec, gesture-up"
         "4, up, dispatcher, exec, toggle-cinema"
         "4, down, dispatcher, exec, toggle-cinema"
       ];
@@ -276,7 +335,6 @@ in
       ### KEYBINDINGS ###
       ###################
       "bind" = [
-        # Updated reference to nix store script
         "$mainMod, B, exec, ${toggle-cinema}"
         "$mainMod, Q, exec, $terminal"
         "$mainMod, X, killactive,"
@@ -284,6 +342,7 @@ in
         "$mainMod, V, exec, $clipboard"
         "$mainMod, R, exec, $menu"
         "$mainMod SHIFT, S, exec, $screenshot"
+        "$mainMod, Tab, exec, gesture-up"
         
         # Workspaces
         "$mainMod, 1, workspace, 1"
@@ -339,8 +398,10 @@ in
         layerrule = ignore_alpha 0, match:namespace ^(rofi)$
         layerrule = blur on, match:namespace ^(rofi)$
         layerrule = ignore_alpha 0, match:namespace ^(rofi)$
+
         layerrule = blur on, match:namespace ^(waybar)$
         layerrule = ignore_alpha 0, match:namespace ^(waybar)$
+        
         layerrule = no_anim on, match:namespace ^(hyprpicker)$
         layerrule = no_anim on, match:namespace ^(selection)$
       '';

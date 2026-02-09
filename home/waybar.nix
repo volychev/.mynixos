@@ -28,7 +28,8 @@
 
         "group/connections" = {
           orientation = "horizontal";
-          modules = [ "bluetooth" "network" ];
+          # VPN перемещен сразу слева от network
+          modules = [ "bluetooth" "custom/vpn" "network" ];
         };
 
         "group/stats" = {
@@ -37,12 +38,7 @@
         };
 
         "hyprland/workspaces" = {
-          format = "{icon}";
-          format-icons = {
-            active = "@";
-            default = "*";
-            empty = "-";
-          };
+          "format" = "{name}"; 
           persistent-workspaces = {
             "*" = [ 1 2 ];
           };
@@ -86,6 +82,14 @@
           format = "{}";
           exec = "date '+%b %d, %H:%M' | tr '[:upper:]' '[:lower:]'";
           interval = 1;
+          tooltip = false;
+        };
+
+        "custom/vpn" = {
+          format = "vpn::{}";
+          exec = "systemctl is-active sing-box --quiet && echo '@' || echo 'X'";
+          on-click = "systemctl is-active sing-box --quiet && sudo systemctl stop sing-box || sudo systemctl start sing-box";
+          interval = 5;
           tooltip = false;
         };
 
@@ -175,7 +179,7 @@
           font-weight: bold;
           letter-spacing: -0.5px;
       }
-
+      
       window#waybar {
           all: unset;
       }
@@ -270,7 +274,7 @@
           color: @color7;
       }
 
-      #network, #bluetooth, #pulseaudio, #backlight, #battery {
+      #network, #bluetooth, #pulseaudio, #backlight, #battery, #custom-vpn {
           padding: 0 6px;
           color: @color7;
       }

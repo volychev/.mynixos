@@ -43,7 +43,7 @@ in
         after_sleep_cmd = "hyprctl dispatch dpms on";
         # Блокировку экрана лучше добавлять сюда (lock_cmd), если нужно
       };
-
+    
       listener = [
         {
           timeout = 300;

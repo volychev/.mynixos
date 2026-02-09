@@ -4,12 +4,27 @@
   environment.systemPackages = with pkgs; [
     curl 
     wget 
+    socat
+    jq
     sing-box
+    docker-compose
   ];
 
   programs = {
     fish.enable = true;
     hyprland.enable = true; 
+  };
+
+  virtualisation.docker = {
+    enable = true;
+    rootless = {
+      enable = true;
+      setSocketVariable = true;
+    };
+    autoPrune = {
+      enable = true;
+      dates = "weekly";
+    };
   };
 
   services = {
@@ -37,6 +52,7 @@
 
   hardware.graphics = {
     enable = true;
+    enable32Bit = true;
     extraPackages = with pkgs; [              
       libvdpau-va-gl      
       libva-vdpau-driver

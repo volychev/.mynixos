@@ -5,6 +5,7 @@
     inputs.zen-browser.homeModules.beta
     ./home/hyprland/hyprland.nix 
     ./home/hyprland/hypridle.nix 
+    ./home/hyprland/hyprpaper.nix 
     ./home/rofi/rofi.nix 
     ./home/waybar.nix
     ./home/kitty.nix
@@ -48,17 +49,18 @@
     python313Packages.virtualenv
     poetry
     
-    hyprshot 
+    grim 
+    slurp
+
     hypridle 
-    swaybg
+    hyprpaper
     wl-clipboard 
     cliphist
+    swappy
     playerctl 
-    libnotify
     pamixer        
     pavucontrol     
     brightnessctl   
-    swaynotificationcenter
   ];
 
   home.pointerCursor = {

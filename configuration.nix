@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   imports = [ 
@@ -12,7 +12,7 @@
   users.users.kirill = {
     isNormalUser = true;
     description = "kirill";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" ];
     shell = pkgs.fish; 
   };
   
@@ -26,14 +26,30 @@
     pkgs.nerd-fonts.jetbrains-mono
   ];
 
-  boot.loader = {
-    systemd-boot.enable = true;
-    efi.canTouchEfiVariables = true;
+  boot = {
+    loader.systemd-boot.configurationLimit = 5;
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+    kernelParams = [
+      "amd_pstate=active"
+      "8250.nr_uarts=0"
+      "iommu=pt"
+      "nvme_core.default_ps_max_latency_us=0"
+      "amdgpu.ppfeaturemask=0xffffffff"
+      "amdgpu.dcdebugmask=0x10"
+      "amdgpu.sg_display=0"
+    ];
+    extraModprobeConfig = ''
+      options snd_hda_intel power_save=1 
+    '';
   };
-  boot.kernelParams = [ 
-    "amd_pstate=active" 
-    "amdgpu.ppfeaturemask=0xffffffff"
-  ];
+
+  zramSwap = {
+    enable = true;
+    memoryPercent = 25;
+  };
 
   system.stateVersion = "25.11";
 }

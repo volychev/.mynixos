@@ -68,29 +68,34 @@ in
     animateBrightness
   ];
 
-  services.udev.extraRules = ''
-    SUBSYSTEM=="power_supply", ACTION=="change", RUN+="${powerChangeScript}"
-  '';
-
   powerManagement.powertop.enable = true;
+  systemd.services.iio-sensor-proxy.enable = false;
 
-  services.auto-cpufreq = {
-    enable = true;
-    settings = {
-      battery = { 
-        governor = "powersave"; 
-        turbo = "never"; 
-      };
-      charger = { 
-        governor = "performance"; 
-        turbo = "auto"; 
+  services = {
+    power-profiles-daemon.enable = false;
+    udev.extraRules = ''
+      SUBSYSTEM=="power_supply", ACTION=="change", RUN+="${powerChangeScript}"
+      ACTION=="add|change", KERNEL=="nvme*", ATTR{queue/scheduler}="none"
+    '';
+    auto-cpufreq = {
+      enable = true;
+      settings = {
+        battery = { 
+          governor = "powersave"; 
+          turbo = "never"; 
+          energy_performance_preference = "power";
+        };
+        charger = { 
+          governor = "performance"; 
+          turbo = "auto"; 
+          energy_performance_preference = "balance_performance";
+        };
       };
     };
-  };
-
-  services.ananicy = {
-    enable = true;
-    package = pkgs.ananicy-cpp;
-    rulesProvider = pkgs.ananicy-rules-cachyos;
+    ananicy = {
+      enable = true;
+      package = pkgs.ananicy-cpp;
+      rulesProvider = pkgs.ananicy-rules-cachyos;
+    };
   };
 }
