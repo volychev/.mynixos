@@ -1,17 +1,16 @@
 { config, pkgs, ... }:
 
 let
-  # Создаем бинарник для лаунчера, который ссылается на файл стиля в Nix-store
   rofi-launcher = pkgs.writeShellScriptBin "rofi-launcher" ''
     ${pkgs.rofi}/bin/rofi \
         -show drun \
         -theme ${./style.rasi}
+        -namespace "rofi"
   '';
 
-  # Бинарник для буфера обмена
   rofi-clipboard = pkgs.writeShellScriptBin "rofi-clipboard" ''
     ${pkgs.cliphist}/bin/cliphist list | \
-    ${pkgs.rofi}/bin/rofi -dmenu -p "@" -display-columns 2 -theme ${./clipboard-style.rasi} | \
+    ${pkgs.rofi}/bin/rofi -dmenu -p "@" -display-columns 2 -theme ${./clipboard-style.rasi} -namespace "rofi" | \
     ${pkgs.cliphist}/bin/cliphist decode | \
     ${pkgs.wl-clipboard}/bin/wl-copy
   '';

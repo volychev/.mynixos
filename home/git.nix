@@ -3,11 +3,13 @@
 {
   programs.git = {
     enable = true;
-
-    userName = "Kirill Volychev";
-    userEmail = "volychevk@gmail.com";
     
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Kirill Volychev";
+        email = "volychevk@gmail.com";
+      };
+
       init.defaultBranch = "main";
     };
   };

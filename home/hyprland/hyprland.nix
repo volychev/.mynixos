@@ -56,19 +56,36 @@ let
         exit 1
     fi
   '';
+  
   toggle-cinema = pkgs.writeShellScriptBin "toggle-cinema" ''
-    if ${pkgs.procps}/bin/pgrep -f "waybar" > /dev/null; then
-        ${pkgs.procps}/bin/pkill waybar
-        
-        ${pkgs.hyprland}/bin/hyprctl keyword workspace "w[tv1], gaps_out:0, gaps_in:0, border:0, rounding:0"
-        ${pkgs.hyprland}/bin/hyprctl keyword windowrule "match:float 0, match:workspace w[tv1], border_size 0"
-        ${pkgs.hyprland}/bin/hyprctl keyword windowrule "match:float 0, match:workspace w[tv1], no_anim on"
-    else
-        ${pkgs.hyprland}/bin/hyprctl reload
-        ${pkgs.waybar}/bin/waybar &
-    fi
-  '';
+      # Пути к бинарникам
+      HYPRCTL="${pkgs.hyprland}/bin/hyprctl"
+      WAYBAR="${pkgs.waybar}/bin/waybar"
+      PKILL="${pkgs.procps}/bin/pkill"
+      PGREP="${pkgs.procps}/bin/pgrep"
 
+      if $PGREP -f "waybar" > /dev/null; then
+          # 1. Убиваем панель
+          $PKILL waybar
+          
+          # 2. Убираем ВСЕ отступы для воркспейса, где только одно окно
+          # gapsout:0 — убирает те самые отступы от краев экрана до окна
+          # gapsin:0  — на случай, если решишь открыть второе (чтобы не было щелей)
+          $HYPRCTL keyword workspace "f[1], gapsout:0, gapsin:0, border:0, rounding:0"
+          
+          # 3. Принудительное правило для всех окон на таком воркспейсе
+          # Используем универсальный селектор для тайловых окон
+          $HYPRCTL keyword windowrulev2 "bordersize 0, floating:0, onworkspace:f[1]"
+          $HYPRCTL keyword windowrulev2 "rounding 0, floating:0, onworkspace:f[1]"
+          
+          # 4. Чтобы изменения применились мгновенно к уже открытому окну
+          $HYPRCTL dispatch cyclenext > /dev/null
+      else
+          # Возврат в обычный режим
+          $HYPRCTL reload
+          $WAYBAR &
+      fi
+  '';
 in
 {
   home.packages = with pkgs; [
@@ -83,10 +100,10 @@ in
 
     settings = {
       "$terminal" = "kitty";
-      "$fileManager" = "kitty -e yazi";
+      "$fileManager" = "nautilus";
       "$menuName" = "rofi";
       "$menu" = "rofi-launcher";
-      "$screenshot" = "hyprshot -m region --border-size 0";
+      "$screenshot" = "hyprshot -m region --border-size 0 -o ~/Pictures/Screenshots";
       "$clipboard" = "rofi-cliboard";
       "$mainMod" = "SUPER";
 
@@ -318,10 +335,10 @@ in
       ];
 
       extraConfig = ''
-        layerrule = blur on, match:namespace ^(rofi-launcher)$
-        layerrule = ignore_alpha 0, match:namespace ^(rofi-launcher)$
-        layerrule = blur on, match:namespace ^(rofi-cliboard)$
-        layerrule = ignore_alpha 0, match:namespace ^(rofi-cliboard)$
+        layerrule = blur on, match:namespace ^(rofi)$
+        layerrule = ignore_alpha 0, match:namespace ^(rofi)$
+        layerrule = blur on, match:namespace ^(rofi)$
+        layerrule = ignore_alpha 0, match:namespace ^(rofi)$
         layerrule = blur on, match:namespace ^(waybar)$
         layerrule = ignore_alpha 0, match:namespace ^(waybar)$
         layerrule = no_anim on, match:namespace ^(hyprpicker)$

@@ -6,6 +6,7 @@
     ./modules/software-configuration.nix
     ./modules/security-configuration.nix
     ./modules/networking-configuration.nix
+    ./modules/power-configuration.nix
   ];
 
   users.users.kirill = {
@@ -20,12 +21,19 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
-  fonts.packages = [ pkgs.jetbrains-mono ];
+  fonts.packages = [ 
+    pkgs.jetbrains-mono
+    pkgs.nerd-fonts.jetbrains-mono
+  ];
 
   boot.loader = {
     systemd-boot.enable = true;
     efi.canTouchEfiVariables = true;
   };
+  boot.kernelParams = [ 
+    "amd_pstate=active" 
+    "amdgpu.ppfeaturemask=0xffffffff"
+  ];
 
   system.stateVersion = "25.11";
 }

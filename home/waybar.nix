@@ -84,7 +84,6 @@
 
         "custom/clock" = {
           format = "{}";
-          # Nix требует экранирования спецсимволов, но здесь простая команда
           exec = "date '+%b %d, %H:%M' | tr '[:upper:]' '[:lower:]'";
           interval = 1;
           tooltip = false;

@@ -4,8 +4,10 @@
   security.sudo.extraRules = [{
     users = [ "kirill" ];
     commands = [{
-        command = "/run/current-system/sw/bin/touchscreen-innhibit"; 
+        command = "/etc/profiles/per-user/kirill/bin/touchscreen-innhibit"; 
         options = [ "NOPASSWD" ];
     }];
   }];
+
+  security.polkit.enable = true;
 }
