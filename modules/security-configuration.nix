@@ -10,15 +10,15 @@
           options = [ "NOPASSWD" ];
         }
         {
-          command = "/run/current-system/sw/bin/systemctl start sing-box";
+          command = "/run/current-system/sw/bin/systemctl start throne";
           options = [ "NOPASSWD" ];
         }
         {
-          command = "/run/current-system/sw/bin/systemctl stop sing-box";
+          command = "/run/current-system/sw/bin/systemctl stop throne";
           options = [ "NOPASSWD" ];
         }
         {
-          command = "/run/current-system/sw/bin/systemctl restart sing-box";
+          command = "/run/current-system/sw/bin/systemctl restart throne";
           options = [ "NOPASSWD" ];
         }
       ];

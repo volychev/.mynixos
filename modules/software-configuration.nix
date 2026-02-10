@@ -8,11 +8,21 @@
     jq
     sing-box
     docker-compose
+    throne
+    ntfs3g
+    udiskie
   ];
 
   programs = {
     fish.enable = true;
     hyprland.enable = true; 
+    throne = {
+      enable = true;
+      tunMode = {
+        enable = true;
+        setuid = true;
+      };
+    };
   };
 
   virtualisation.docker = {
@@ -28,8 +38,14 @@
   };
 
   services = {
-    xserver.xkb = { layout = "us"; variant = ""; };
-    displayManager.sddm = { enable = true; wayland.enable = true; };
+    xserver.xkb = { 
+      layout = "us"; 
+      variant = ""; 
+    };
+    displayManager.sddm = { 
+      enable = true; 
+      wayland.enable = true; 
+    };
     dbus.implementation = "broker";
     gvfs.enable = true;
     upower.enable = true;
@@ -38,13 +54,14 @@
     blueman.enable = true;
     fstrim.enable = true;
     libinput.enable = true;
+    udisks2.enable = true;
     pipewire = {
       enable = true;
       pulse.enable = true;
       wireplumber.enable = true;
     };
   };
-  
+
   xdg.portal = {
     enable = true;
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];

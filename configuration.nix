@@ -7,6 +7,7 @@
     ./modules/security-configuration.nix
     ./modules/networking-configuration.nix
     ./modules/power-configuration.nix
+    ./modules/filesystem-configuration.nix
   ];
 
   users.users.kirill = {
@@ -21,9 +22,12 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
-  fonts.packages = [ 
-    pkgs.jetbrains-mono
-    pkgs.nerd-fonts.jetbrains-mono
+
+  fonts.packages = with pkgs; [
+    corefonts 
+    vista-fonts
+    jetbrains-mono
+    nerd-fonts.jetbrains-mono
   ];
 
   boot = {

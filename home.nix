@@ -14,6 +14,7 @@
     ./home/git.nix
     ./home/zen.nix
     ./home/vscode.nix
+    ./home/jetbrains/jetbrains.nix 
   ];
 
   home = {
@@ -27,17 +28,22 @@
     rofi 
     waybar 
 
-    nemo
+    nemo-with-extensions
+    file-roller
+    p7zip
+    unzip
+    unrar
 
     telegram-desktop 
+    discord
 
     obsidian
+    onlyoffice-desktopeditors
     figma-linux
 
     micro 
     vscode-fhs
-    jetbrains.pycharm-oss
-    # jetbrains.clion
+    # jetbrains.IDE in ./home/jetbrains/jetbrains.nix 
 
     clang
     llvmPackages.libstdcxxClang
@@ -49,9 +55,11 @@
     python313Packages.virtualenv
     poetry
     
+    jdk21 
+    gradle
+
     grim 
     slurp
-
     hypridle 
     hyprpaper
     wl-clipboard 
@@ -74,6 +82,7 @@
   home.sessionVariables = {
     NIXOS_OZONE_LAYER = "1";
     GTK_THEME = "Adwaita-dark";
+    _JAVA_AWT_WM_NONREPARENTING = "1";
   };
 
   gtk = {

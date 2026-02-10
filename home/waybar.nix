@@ -86,11 +86,11 @@
         };
 
         "custom/vpn" = {
-          format = "vpn::{}";
-          exec = "systemctl is-active sing-box --quiet && echo '@' || echo 'X'";
-          on-click = "systemctl is-active sing-box --quiet && sudo systemctl stop sing-box || sudo systemctl start sing-box";
-          interval = 5;
-          tooltip = false;
+            format = "vpn::{}";
+            exec = "ip link show throne-tun | grep -q '<.*UP.*>' && echo '@' || echo 'X'";
+            on-click = "Throne"; 
+            interval = 3;
+            tooltip = false;
         };
 
         network = {

@@ -183,6 +183,7 @@ in
       "exec-once" = [
         "$terminal"
         "sudo touchscreen-innhibit"
+        "udiskie --smarttray &"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
       ];
