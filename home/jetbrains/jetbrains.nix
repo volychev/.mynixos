@@ -7,6 +7,7 @@ let
     -XX:+UseG1GC
     -XX:MaxGCPauseMillis=100
     -Dsun.tools.attach.tmp.only=true
+    -Dawt.toolkit.name=WLToolkit
     -javaagent:/etc/nixos/home/jetbrains/jetbra/ja-netfilter.jar=jetbrains
   '';
 in

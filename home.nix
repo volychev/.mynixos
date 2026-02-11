@@ -83,6 +83,8 @@
     NIXOS_OZONE_LAYER = "1";
     GTK_THEME = "Adwaita-dark";
     _JAVA_AWT_WM_NONREPARENTING = "1";
+    NIXOS_OZONE_WL = "1";    
+    IBUS_ENABLE_SYNC_MODE = "1";     
   };
 
   gtk = {
