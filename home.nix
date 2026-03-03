@@ -38,12 +38,13 @@
     discord
 
     obsidian
-    onlyoffice-desktopeditors
+    libreoffice-qt
     figma-linux
 
     micro 
     vscode-fhs
     # jetbrains.IDE in ./home/jetbrains/jetbrains.nix 
+    github-copilot-cli
 
     clang
     llvmPackages.libstdcxxClang

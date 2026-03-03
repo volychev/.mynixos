@@ -25,7 +25,7 @@
           orientation = "horizontal";
           modules = [ "group/expand" "hyprland/window" ];
         };
-
+r
         "group/connections" = {
           orientation = "horizontal";
           # VPN перемещен сразу слева от network
