@@ -150,6 +150,7 @@ in
       "$clipboard" = "rofi-clipboard";
       "$screenshot" = "grim -g \"$(slurp -b 00000066 -c 00000000 -B BFb4faff -w 2)\" - | tee >(wl-copy) | swappy -f -";
       "$vpn" = "Throne";
+      "$telegram" = "Telegram";
       "$mainMod" = "SUPER";
 
       ################
@@ -186,6 +187,7 @@ in
         "udiskie --smarttray &"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
+        "$vpn"
       ];
 
       ################
@@ -324,13 +326,13 @@ in
       ### KEYBINDINGS ###
       ###################
       "bind" = [
-        "$mainMod, Shift_L, exec, $terminal"
-        "$mainMod, RETURN, exec, $terminal"
+        "$mainMod, SPACE, exec, $terminal"
         "$mainMod, X, killactive,"
         "$mainMod, F, exec, $fileManager"
         "$mainMod, V, exec, $clipboard"
         "$mainMod, R, exec, $menu"
-        "$mainMod, T, exec, $vpn"
+        "$mainMod, Grave, exec, $vpn"
+        "$mainMod, T, exec, $telegram"
         "$mainMod SHIFT, S, exec, $screenshot"
         "$mainMod, Tab, exec, gesture-up"
         
