@@ -22,7 +22,7 @@
       userSettings = {
         # Appearance
         "workbench.colorTheme" = "Jetbrains Fleet";
-        "workbench.iconTheme" = "vscode-jetbrains-icon-theme";
+        "workbench.iconTheme" = "vscode-jetbrains-icon-theme-2023-dark";
         "workbench.productIconTheme" = "material-product-icons";
         
         # Editor
