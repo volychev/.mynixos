@@ -324,7 +324,7 @@ in
       ### KEYBINDINGS ###
       ###################
       "bind" = [
-        "$mainMod, ENTER, exec, $terminal"
+        "$mainMod SHIFT, exec, $terminal"
         "$mainMod, X, killactive,"
         "$mainMod, F, exec, $fileManager"
         "$mainMod, V, exec, $clipboard"
