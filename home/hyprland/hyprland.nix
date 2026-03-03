@@ -145,11 +145,11 @@ in
       };
 
       "$terminal" = "kitty";
-      "$fileManager" = "nautilus";
+      "$fileManager" = "nemo";
       "$menu" = "rofi-launcher";
-      # "$screenshot" = "hyprshot -m region --border-size 0 -o ~/Pictures/Screenshots";
-      "$screenshot" = "grim -g \"$(slurp -b 00000066 -c 00000000 -B BFb4faff -w 2)\" - | tee >(wl-copy) | swappy -f -";
       "$clipboard" = "rofi-clipboard";
+      "$screenshot" = "grim -g \"$(slurp -b 00000066 -c 00000000 -B BFb4faff -w 2)\" - | tee >(wl-copy) | swappy -f -";
+      "$vpn" = "Throne";
       "$mainMod" = "SUPER";
 
       ################
@@ -324,12 +324,12 @@ in
       ### KEYBINDINGS ###
       ###################
       "bind" = [
-        "$mainMod, B, exec, ${toggle-cinema}"
-        "$mainMod, Q, exec, $terminal"
+        "$mainMod, ENTER, exec, $terminal"
         "$mainMod, X, killactive,"
-        "$mainMod, E, exec, $fileManager"
+        "$mainMod, F, exec, $fileManager"
         "$mainMod, V, exec, $clipboard"
         "$mainMod, R, exec, $menu"
+        "$mainMod, T, exec, $vpn"
         "$mainMod SHIFT, S, exec, $screenshot"
         "$mainMod, Tab, exec, gesture-up"
         

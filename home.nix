@@ -33,7 +33,7 @@
     p7zip
     unzip
     unrar
-
+    
     telegram-desktop 
     discord
 
