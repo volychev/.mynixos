@@ -151,6 +151,7 @@ in
       "$screenshot" = "grim -g \"$(slurp -b 00000066 -c 00000000 -B BFb4faff -w 2)\" - | tee >(wl-copy) | swappy -f -";
       "$vpn" = "Throne";
       "$telegram" = "Telegram";
+      "$browser" = "zen-beta";
       "$mainMod" = "SUPER";
 
       ################
@@ -333,6 +334,7 @@ in
         "$mainMod, R, exec, $menu"
         "$mainMod, Grave, exec, $vpn"
         "$mainMod, T, exec, $telegram"
+        "$mainMod, Z, exec, $browser"
         "$mainMod SHIFT, S, exec, $screenshot"
         "$mainMod, Tab, exec, gesture-up"
         
