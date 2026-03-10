@@ -49,8 +49,8 @@
     dbus.implementation = "broker";
     gvfs.enable = true;
     upower.enable = true;
-    printing.enable = true;
-    openssh.enable = true;
+    openssh.enable = false;
+    # printing.enable = false; # раскомментируй если принтера нет
     blueman.enable = true;
     fstrim.enable = true;
     libinput.enable = true;

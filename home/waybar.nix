@@ -1,5 +1,17 @@
 { config, pkgs, ... }:
 
+let
+  langIndicator = pkgs.writeShellScript "lang-indicator" ''
+    DATA=$(hyprctl -j devices 2>/dev/null)
+    LAYOUT=$(echo "$DATA" | ${pkgs.jq}/bin/jq -r 'first(.keyboards[] | select(.main == true)).active_keymap // "English"' | cut -c1-2 | tr '[:upper:]' '[:lower:]')
+    CAPS=$(echo "$DATA" | ${pkgs.jq}/bin/jq -r 'first(.keyboards[] | select(.main == true)).capsLock // false')
+    if [ "$CAPS" = "true" ]; then
+      echo "$LAYOUT" | tr '[:lower:]' '[:upper:]'
+    else
+      echo "$LAYOUT"
+    fi
+  '';
+in
 {
   programs.waybar = {
     enable = true;
@@ -12,9 +24,9 @@
         position = "top";
         reload_style_on_change = true;
 
-        modules-left = [ "group/workspace" "idle_inhibitor" "group/windowtray" ];
+        modules-left = [ "group/workspace" "group/windowtray" ];
         modules-center = [ "custom/clock" ];
-        modules-right = [ "hyprland/language" "group/connections" "group/stats" ];
+        modules-right = [ "custom/language" "group/connections" "group/media" "group/power" ];
 
         "group/workspace" = {
           orientation = "horizontal";
@@ -28,13 +40,17 @@
 
         "group/connections" = {
           orientation = "horizontal";
-          # VPN перемещен сразу слева от network
-          modules = [ "bluetooth" "custom/vpn" "network" ];
+          modules = [ "network" "custom/vpn" "bluetooth" ];
         };
 
-        "group/stats" = {
+        "group/media" = {
           orientation = "horizontal";
-          modules = [ "pulseaudio" "backlight" "battery" ];
+          modules = [ "pulseaudio" "backlight" ];
+        };
+
+        "group/power" = {
+          orientation = "horizontal";
+          modules = [ "custom/power_profile" "battery" ];
         };
 
         "hyprland/workspaces" = {
@@ -46,15 +62,18 @@
 
         "hyprland/window" = {
           format = "{title}";
-          max-length = 40;
+          max-length = 60;
           rewrite = {
             "^$" = "...";
           };
         };
 
-        "hyprland/language" = {
-          format = "{short}";
+        "custom/language" = {
+          format = "{}";
+          exec = "${langIndicator}";
+          interval = 1;
           on-click = "hyprctl switchxkblayout all next";
+          tooltip = false;
         };
 
         "custom/expand" = {
@@ -132,21 +151,23 @@
         battery = {
           interval = 30;
           format = "pwr::{capacity}";
-          format-charging = "pwr::^{capacity}%";
+          format-charging = "chg::^{capacity}%";
           format-plugged = "ac::{capacity}%";
           states = {
             warning = 30;
-            critical = 15;
+            critical = 20;
           };
         };
 
-        idle_inhibitor = {
-          format = "{icon}";
-          format-icons = {
-            activated = "idl::(O_O)";
-            deactivated = "idl::(-_-)";
-          };
-          tooltip = true;
+        "custom/power_profile" = {
+          "format" = "{}";
+          "exec" = "power-profile get";
+          "interval" = 30;
+          "return-type" = "json";
+          "on-click" = "power-profile toggle-eco";
+          "on-click-right" = "power-profile toggle-performance";
+          "signal" = 8;
+          "tooltip" = true;
         };
       };
     };
@@ -209,12 +230,13 @@
           margin-right: 5px;
       }
 
-      #idle_inhibitor {
-          background: alpha(@background, 0.5);
-          padding: 7px 10px;
-          border-radius: 10px;
-          margin-right: 5px;
+      #custom-power_profile {
+          padding: 0 6px;
           color: @color7;
+      }
+      
+      #custom-power_profile.performance {
+          color: #f53c3c;
       }
 
       #windowtray {
@@ -238,13 +260,20 @@
           margin-right: 5px;
       }
 
-      #stats {
+      #media {
+          background: alpha(@background, 0.5);
+          padding: 7px;
+          border-radius: 10px;
+          margin-right: 5px;
+      }
+
+      #power {
           background: alpha(@background, 0.5);
           padding: 7px;
           border-radius: 10px;
       }
 
-      #language {
+      #custom-language {
           background: alpha(@background, 0.5);
           padding: 7px 10px;
           border-radius: 10px;
@@ -279,10 +308,6 @@
           color: @color7;
       }
 
-      #battery.charging {
-          color: #26A65B;
-      }
-
       #battery.warning:not(.charging) {
           color: #ffbe61;
       }
@@ -305,16 +330,6 @@
       tooltip {
           background: @background;
           color: @color7;
-      }
-
-      #custom-clock:hover,
-      #connections:hover,
-      #stats:hover,
-      #workspace:hover,
-      #windowtray:hover,
-      #language:hover,
-      #idle_inhibitor:hover {
-          transition: all 0.3s ease;
       }
     '';
   };

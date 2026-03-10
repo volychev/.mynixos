@@ -74,76 +74,19 @@ let
           $WAYBAR &
       fi
   '';
-
-  state-file = "/tmp/hyprexpo.active";
-  waybar-restore-file = "/tmp/waybar.should_restore";
-
-  expo-watcher = pkgs.writeShellScriptBin "expo-watcher" ''
-    HYPRCTL="${pkgs.hyprland}/bin/hyprctl"
-    WAYBAR="${pkgs.waybar}/bin/waybar"
-
-    ${pkgs.socat}/bin/socat -U - UNIX-CONNECT:$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock | while read -r line; do
-      if [[ "$line" == "workspace>>"* ]]; then
-        rm -f "${state-file}"
-        pkill -P $$
-        exit 0
-      fi
-    done
-  '';
-
-  gesture-up = pkgs.writeShellScriptBin "gesture-up" ''
-    PGREP="${pkgs.procps}/bin/pgrep"
-    PKILL="${pkgs.procps}/bin/pkill"
-
-    if pgrep -x rofi > /dev/null; then
-      pkill rofi
-      exit 0
-    fi
-
-    if [ -f "${state-file}" ]; then
-      exit 0
-    fi
-
-    touch "${state-file}"
-    hyprctl dispatch hyprexpo:expo
-    expo-watcher &
-  '';
-
-  gesture-down = pkgs.writeShellScriptBin "gesture-down" ''
-    if [ -f "${state-file}" ]; then
-      hyprctl dispatch workspace e+1
-    else
-      rofi-launcher
-    fi
-  '';
 in
 {
   home.packages = with pkgs; [
     touchscreen-innhibit
     toggle-cinema
-    expo-watcher
-    gesture-up
-    gesture-down
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
     
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    
-    plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.system}.hyprexpo
-    ];
 
     settings = {
-      "plugin:hyprexpo" = {
-        columns = 3;             
-        gap_size = 20;           
-        bg_col = "rgb(000000)";  
-
-        workspace_method = "center current"; 
-      };
-
       "$terminal" = "kitty";
       "$fileManager" = "nemo";
       "$menu" = "rofi-launcher";
@@ -166,6 +109,7 @@ in
         "XDG_CURRENT_DESKTOP,Hyprland"
         "XDG_SESSION_TYPE,wayland"
         "XDG_SESSION_DESKTOP,Hyprland"
+        "ELECTRON_OZONE_PLATFORM_HINT,auto"
         "QT_AUTO_SCREEN_SCALE_FACTOR,1"
         "QT_QPA_PLATFORM,wayland;xcb"
         "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
@@ -184,6 +128,7 @@ in
       #################
       "exec-once" = [
         "$terminal"
+        "power-monitor"
         "sudo touchscreen-innhibit"
         "udiskie --smarttray &"
         "wl-paste --type text --watch cliphist store"
@@ -293,7 +238,9 @@ in
         "force_default_wallpaper" = 0;
         "disable_hyprland_logo" = true;
         "vfr" = true;
-        "vrr" = 0;
+        "vrr" = 1; # Enable Variable Refresh Rate for supported displays
+        "animate_manual_resizes" = true;
+        "animate_mouse_windowdragging" = true;
         "on_focus_under_fullscreen" = 0;
       };
 
@@ -309,8 +256,6 @@ in
 
       "gesture" = [
         "3, horizontal, workspace"
-        "3, down, dispatcher, exec, gesture-down"
-        "3, up, dispatcher, exec, gesture-up"
         "4, up, dispatcher, exec, toggle-cinema"
         "4, down, dispatcher, exec, toggle-cinema"
       ];
@@ -327,6 +272,7 @@ in
       ### KEYBINDINGS ###
       ###################
       "bind" = [
+        "$mainMod, P, exec, power-profile next"
         "$mainMod, SPACE, exec, $terminal"
         "$mainMod, X, killactive,"
         "$mainMod, F, exec, $fileManager"
@@ -336,7 +282,6 @@ in
         "$mainMod, T, exec, $telegram"
         "$mainMod, Z, exec, $browser"
         "$mainMod SHIFT, S, exec, $screenshot"
-        "$mainMod, Tab, exec, gesture-up"
         
         # Workspaces
         "$mainMod, 1, workspace, 1"

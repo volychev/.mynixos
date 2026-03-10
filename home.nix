@@ -45,11 +45,16 @@
     vscode-fhs
     # jetbrains.IDE in ./home/jetbrains/jetbrains.nix 
     github-copilot-cli
-
+    typst
+    
     clang
     llvmPackages.libstdcxxClang
     cmake
     gnumake
+    clang-tools
+    llvm
+    gcovr
+    gtest
 
     python313
     python313Packages.pip

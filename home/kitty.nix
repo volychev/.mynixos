@@ -41,6 +41,11 @@
       confirm_os_window_close = 0;
       enable_audio_bell = false;
       window_padding_width = 12;
+      
+      # Rendering optimizations for 120Hz
+      repaint_delay = 8;
+      input_delay = 1;
+      sync_to_monitor = true;
     };
   };
 }
