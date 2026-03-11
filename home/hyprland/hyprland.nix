@@ -272,7 +272,7 @@ in
       ### KEYBINDINGS ###
       ###################
       "bind" = [
-        "$mainMod, P, exec, power-profile next"
+        "$mainMod, M, exec, power-profile next"
         "$mainMod, SPACE, exec, $terminal"
         "$mainMod, X, killactive,"
         "$mainMod, F, exec, $fileManager"
