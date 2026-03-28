@@ -75,7 +75,6 @@ export default function InteractiveCenter() {
     applicationPopover.set_child(applicationPopoverContent);
     applicationPopover.set_parent(searchBox);
     applicationPopover.set_autohide(false);
-    applicationPopover.set_can_focus(false);
     applicationPopover.set_has_arrow(false);
 
     const astalApplications = new Apps.Apps();
@@ -114,7 +113,7 @@ export default function InteractiveCenter() {
             const applicationButton = (
                 <button cssClasses={["search-app-button"]} can_focus={false} onClicked={applicationAction}>
                     <box spacing={10} halign={Gtk.Align.START}>
-                        <image icon_name={applicationItem.icon_name} pixel_size={20} />
+                        <image icon_name={applicationItem.icon_name} pixel_size={24} />
                         <label label={applicationItem.name} halign={Gtk.Align.START} />
                     </box>
                 </button>
@@ -137,6 +136,12 @@ export default function InteractiveCenter() {
             searchDebounce = null;
             return GLib.SOURCE_REMOVE;
         });
+    });
+
+    searchEntry.connect("activate", () => {
+        if (applicationActions[applicationIndex]) {
+            applicationActions[applicationIndex]();
+        }
     });
 
     const searchKeyController = new Gtk.EventControllerKey();
@@ -162,13 +167,6 @@ export default function InteractiveCenter() {
         return false;
     });
     searchEntry.add_controller(searchKeyController);
-
-    searchEntry.connect("notify::has-focus", () => {
-        if (!searchEntry.has_focus) {
-            searchEntry.set_text("");
-            applicationPopover.set_visible(false);
-        }
-    });
 
     stack.add_named(searchBox, "search");
 

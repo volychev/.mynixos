@@ -68,9 +68,11 @@ window.Bar {
     }
 
     .battery-percentage {
+      font-family: "SF Pro Rounded", sans-serif;
       font-size: 11px;
-      color: rgba(#000000, .6);
+      color: rgba(#000000, .75);
       font-weight: 700;
+      margin-left: -2px;
     }
   }
 
@@ -85,15 +87,11 @@ window.Bar {
 
   .bluetooth-icon {
     font-family: "SF Pro Text", "SF Pro", sans-serif;
-    font-size: 14px;
+    font-size: 14px;  
     font-weight: 600;
     color: rgba(#FFFFFF, 0.9);
     text-shadow: 0 0 2px rgba(#000000, 0.5);
-    margin: 0 4px;
-
-    &:hover, &:focus-within {
-      background-color: $light-gray;
-    }
+    margin: 0 2px;
   }
 
   .disabled {

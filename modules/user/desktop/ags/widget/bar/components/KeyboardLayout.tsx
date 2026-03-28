@@ -9,16 +9,13 @@ export default function KeyboardLayoutIcon() {
     icon.valign = Gtk.Align.CENTER;
 
     const update = () => {
-        // Получаем раскладку
         execAsync("mmsg -g -k")
             .then((layoutOutput) => {
-                // Получаем статус Caps Lock напрямую из системы
                 execAsync("bash -c \"cat /sys/class/leds/*capslock/brightness | head -n 1\"")
                     .then((capsOutput) => {
                         const parts = layoutOutput.trim().split(" ");
                         let currentLayout = parts[parts.length - 1];
 
-                        // Заменяем us на en для красоты
                         if (currentLayout === "us") {
                             currentLayout = "en";
                         }
@@ -40,13 +37,11 @@ export default function KeyboardLayoutIcon() {
             });
     };
 
-    // Обновляем данные каждые 500 миллисекунд
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
         update();
         return GLib.SOURCE_CONTINUE;
     });
 
-    // Первичный вызов при инициализации
     update();
 
     return (

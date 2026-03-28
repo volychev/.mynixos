@@ -125,17 +125,13 @@
     QT_SCALE_FACTOR_ROUNDING_POLICY = "PassThrough";
     SDL_VIDEODRIVER = "wayland";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    GTK_THEME = "WhiteSur-Dark"; 
   };
 
   gtk = {
     enable = true;
     theme = {
       name = "WhiteSur-Dark";
-      package = pkgs.whitesur-gtk-theme.override {
-        altVariants = [ "all" ];
-        themeVariants = [ "default" ];
-      };
+      package = pkgs.whitesur-gtk-theme;
     };
     iconTheme = {
       name = "WhiteSur";
@@ -153,9 +149,6 @@
       gtk-theme = "WhiteSur-Dark";
       icon-theme = "WhiteSur";
       cursor-theme = "Bibata-Modern-Ice";
-    };
-    "org/gnome/shell/extensions/user-theme" = {
-      name = "WhiteSur-Dark";
     };
   };
 
