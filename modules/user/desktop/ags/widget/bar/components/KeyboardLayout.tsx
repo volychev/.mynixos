@@ -37,7 +37,7 @@ export default function KeyboardLayoutIcon() {
             });
     };
 
-    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 500, () => {
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
         update();
         return GLib.SOURCE_CONTINUE;
     });
