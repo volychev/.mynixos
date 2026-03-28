@@ -1,52 +1,81 @@
-{ inputs, config, pkgs, ... }:
+{ inputs, config, pkgs, user, ... }:
 
 {
   imports = [
     inputs.zen-browser.homeModules.beta
-    ./home/hyprland/hyprland.nix 
-    ./home/hyprland/hypridle.nix 
-    ./home/hyprland/hyprpaper.nix 
-    ./home/rofi/rofi.nix 
-    ./home/waybar.nix
-    ./home/kitty.nix
-    ./home/fish.nix
-    ./home/fastfetch.nix
-    ./home/git.nix
-    ./home/zen.nix
-    ./home/vscode.nix
-    ./home/jetbrains/jetbrains.nix 
+    inputs.ags.homeManagerModules.default
+    ./modules/user/desktop/mango/mango.nix
+    ./modules/user/cli/fastfetch.nix
+    ./modules/user/cli/fish.nix
+    ./modules/user/cli/kitty.nix
+    ./modules/user/cli/git.nix
+    ./modules/user/applications/zen.nix
+    ./modules/user/development/vscode.nix
+    ./modules/user/development/jetbrains/jetbrains.nix 
   ];
 
   home = {
-    username = "kirill";
-    homeDirectory = "/home/kirill";
+    username = user;
+    homeDirectory = "/home/${user}";
     stateVersion = "25.11";
   };
 
-  home.packages = with pkgs; [
+  home.packages = with pkgs; [  
+    # Desktop
     kitty 
-    rofi 
-    waybar 
+    swww
 
-    nemo-with-extensions
-    file-roller
-    p7zip
-    unzip
-    unrar
+    # CLI
+    btop
     
+    # GNOME
+    gnome-calculator
+    gnome-clocks
+    gnome-calendar
+    gnome-font-viewer
+    gnome-graphs
+    gnome-secrets
+    nautilus
+    sushi
+    loupe
+    snapshot
+    amberol
+    binary
+    eyedropper
+    hieroglyphic
+    paper-clip
+    switcheroo
+
+    # Social
     telegram-desktop 
     discord
 
+    # Development
+    vscode-fhs
+    # jetbrains.IDE in ./home/jetbrains/jetbrains.nix 
+
+    # Editors
+    micro
     obsidian
     libreoffice-qt
     figma-linux
-
-    micro 
-    vscode-fhs
-    # jetbrains.IDE in ./home/jetbrains/jetbrains.nix 
-    github-copilot-cli
     typst
+
+    # Networking
+    throne
+
+    # Theme
+    bibata-cursors
+    colloid-icon-theme
     
+    # System
+    pamixer        
+    pavucontrol     
+    brightnessctl
+    cliphist
+    wl-clipboard
+
+    # CPP
     clang
     llvmPackages.libstdcxxClang
     cmake
@@ -56,63 +85,69 @@
     gcovr
     gtest
 
+    # Python
     python313
     python313Packages.pip
     python313Packages.virtualenv
     poetry
-    
+
+    # Java
     jdk21 
     gradle
-
-    grim 
-    slurp
-    hypridle 
-    hyprpaper
-    wl-clipboard 
-    cliphist
-    swappy
-    playerctl 
-    pamixer        
-    pavucontrol     
-    brightnessctl   
   ];
 
-  home.pointerCursor = {
-    gtk.enable = true;
-    x11.enable = true;
-    package = pkgs.bibata-cursors;
-    name = "Bibata-Modern-Ice";
-    size = 18;
+  programs.ags = {
+    enable = true;
+    configDir = ./modules/user/desktop/ags; 
+
+    extraPackages = with inputs.ags.packages.${pkgs.system}; [
+      astal4      
+      io          # Базовый ввод-вывод
+      apps        # Список приложений
+      battery     # Батарея
+      mpris       # Плеер
+      network     # Сеть
+      tray        # Трей
+      wireplumber # Звук
+      bluetooth
+    ];
   };
 
   home.sessionVariables = {
-    NIXOS_OZONE_LAYER = "1";
-    GTK_THEME = "Adwaita-dark";
+    NIXOS_OZONE_WL = "1";
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    NIXOS_OZONE_WL = "1";    
-    IBUS_ENABLE_SYNC_MODE = "1";     
+    QT_QPA_PLATFORM = "wayland;xcb";
+    SDL_VIDEODRIVER = "wayland";
   };
 
   gtk = {
     enable = true;
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
+    # theme = {
+    #   name = "WhiteSur-Dark";
+    #   package = pkgs.whitesur-gtk-theme;
+    # };
+    iconTheme = {
+      name = "Colloid-Dark";
+      package = pkgs.colloid-icon-theme;
     };
-    gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
-    gtk4.extraConfig.gtk-application-prefer-dark-theme = 1;
-  };
-
-  qt = {
-    enable = true;
-    platformTheme.name = "gtk"; 
-    style.name = "adwaita-dark";
+    cursorTheme = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+    };
   };
 
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
+      # gtk-theme = "WhiteSur-Dark";
+      icon-theme = "Colloid-Dark";
     };
+  };
+
+  qt = {
+    enable = true;
+    platformTheme.name = "gtk"; 
+    style.name = "adwaita-dark"; 
   };
 
   programs.home-manager.enable = true;

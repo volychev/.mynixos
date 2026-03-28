@@ -1,0 +1,329 @@
+$border-radius: 10px;
+$gray: #6A7376;
+$dark-gray: #565B59;
+$light-gray: #888C8A;
+
+window.Bar {
+  background: transparent;
+  font-size: 12px;
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.25px;
+
+  .startbox, .middlebox, .endbox {
+    margin: 5px;
+    margin-bottom: 0;
+    padding: 3px 0 3px 0;
+    
+    label {
+      color: white;
+    }
+  }
+
+  .separator {
+    background-color: $light-gray; 
+    min-width: 2px;
+    min-height: 15px;
+    border-radius: 10px;
+    margin: 0 10px 0 10px;
+  }
+
+  .clock-container {
+    margin: 0 5px 0 4px;
+
+    label {
+      font-size: 13px;
+      color: rgb(255, 255, 255);
+      font-weight: 700;
+      text-shadow: 0 0 2px rgba(#000000, 0.5);
+    }
+  }
+  .battery-container {
+    margin: -1px 4px;
+
+    .battery-body {
+      border-radius: 5px;
+      margin-right: 1px;
+      background-color: $gray;
+      text-shadow: 0 0 2px rgba(#000000, 0.5);
+    }
+
+    .battery-fill {
+      background-color: rgba(#FFFFFF, 0.9);; 
+      border-radius: 5px;
+      transition: all 0.3s ease-in-out;
+      
+      &.charging {
+        background-color: #55b964; 
+      }
+      &.low {
+        background-color: #f04444; 
+      }
+    }
+
+    .battery-tip {
+      background-color: $gray;
+      min-width: 2px;
+      min-height: 5px;
+      border-radius: 0 30px 30px 0;
+    }
+
+    .battery-percentage {
+      font-size: 11px;
+      color: rgba(#000000, .65);
+      font-weight: 700;
+    }
+  }
+
+  .wifi-icon {
+    font-family: "SF Pro Text", "SF Pro", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(#FFFFFF, 0.9);
+    text-shadow: 0 0 2px rgba(#000000, 0.5);
+    margin: 0 4px;
+  }
+
+  .bluetooth-icon {
+    font-family: "SF Pro Text", "SF Pro", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(#FFFFFF, 0.9);
+    text-shadow: 0 0 2px rgba(#000000, 0.5);
+    margin: 0 4px;
+
+    &:hover, &:focus-within {
+      background-color: $light-gray;
+    }
+  }
+
+  .disabled {
+    display: none;
+    max-width: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .audio-button {
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    outline: none;
+
+    transition: all 0.2s ease;
+    margin: 0 4px;
+
+    &:active {
+      opacity: 0.7;
+    }
+
+    .audio-icon {
+      font-family: "SF Pro Text", "SF Pro", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(#FFFFFF, 0.9);
+      text-shadow: 0 0 2px rgba(#000000, 0.5);
+    }
+  }
+
+  .workspaces-container {
+    margin-left: 3px;
+
+    .tag-button {
+      background-image: none;
+      box-shadow: none;
+      text-shadow: none;
+
+      background-color: $dark-gray; 
+      border-radius: $border-radius;
+      border: none;
+      box-shadow: 0 0 3px rgba(#000000, 0.1);
+      padding: 2px 8px;
+      margin: 0;
+      outline: none;
+      
+      &.active {
+        background-color: $light-gray;
+        transition: all 0.4s ease;
+
+        .tag-number {
+          color: white;
+        }
+      }
+
+      .tag-number {
+        margin: 0 5px;
+        font-weight: 700;
+        text-shadow: 0 0 2px rgba(#000000, 0.5);
+        color: $light-gray;
+        font-size: 13px;
+      }
+
+      .tag-title {
+        font-weight: 600;
+        text-shadow: 0 0 2px rgba(#000000, 0.5);
+        font-size: 13px;
+        color: white;
+        margin-left: 2px;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .tray-container {
+    margin: 0 4px;
+  }
+
+  .tray-toggle-box {
+    border-radius: $border-radius;
+    transition: background-color 0.2s ease;
+
+    .tray-arrow-icon {
+      font-family: "SF Pro Text", "SF Pro", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(#FFFFFF, 0.9);
+      text-shadow: 0 0 2px rgba(#000000, 0.5);
+    }
+  }
+
+  .tray-items-box {
+    background-color: $dark-gray;
+    border-radius: $border-radius;
+
+    .tray-item-button {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      margin: 0;
+      padding: 0;
+      min-height: 0;
+      min-width: 0;
+      outline: none;
+      transition: background-color 0.2s ease;
+      border-radius: 6px;
+
+      &:hover {
+        background-color: $light-gray;
+      }
+    }
+  }
+
+  .interactive-zone-box {
+    background-color: $dark-gray; 
+    border-radius: $border-radius;
+    padding: 2px 8px;
+    transition: background-color 0.2s ease;
+
+    .zone-icon {
+      all: unset;
+      font-family: "SF Pro Text", "SF Pro", sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      margin-right: 6px;
+      opacity: 0.35;
+      text-shadow: 0 0 2px rgba(#000000, 0.5);
+      
+      &.clickable-icon {
+        transition: opacity 0.2s ease;
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    &.active {
+      background-color: $light-gray;
+      .zone-icon {
+        opacity: 1.0;
+      }
+    }
+
+    &:focus-within {
+      background-color: $light-gray;
+      .zone-icon {
+        opacity: 1.0;
+      }
+    }
+  }
+  
+  entry.zone-entry {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: white;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    caret-color: white;
+    
+    min-height: 0; 
+    padding: 0;
+    min-width: 150px;
+
+    &:focus, &:focus-visible, &:focus-within {
+      box-shadow: none; 
+      outline: none;
+      border: none;
+      background: transparent;
+    }
+
+    selection {
+      background-color: $light-gray;
+    }
+  }
+
+  popover > contents {
+    background-color: $light-gray;
+    border-radius: $border-radius;
+    padding: 6px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin-top: 4px;
+
+    scrolledwindow {
+      min-width: 170px;
+    }
+
+    .search-results {
+      min-width: 170px;
+    }
+
+    button.search-app-button {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      transition: all 0.2s ease;
+
+      label {
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        text-shadow: 0 0 1px rgba(#000000, 0.5);
+      }
+
+      &:hover, &:focus, &.selected {
+        background-color: $gray;
+        
+        label {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .osd-body {
+    border-radius: 20px;
+    background-color: $gray;
+    margin: 8px 0;
+  }
+
+  .osd-fill {
+    background-color: rgba(#FFFFFF, 0.9); 
+    border-radius: 20px;
+    transition: all 0.3s ease-in-out;
+  }
+}
