@@ -10,6 +10,7 @@ import Workspaces from "./components/Apps"
 import InteractiveCenter from "./components/InteractiveCenter"
 import BluetoothIcon from "./components/Bluetooth"
 import TrayModule from "./components/Tray"
+import KeyboardLayoutIcon from "./components/KeyboardLayout"
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
@@ -38,6 +39,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
         }
         end_widget={
           <box class="endbox" halign={Gtk.Align.END}>
+            <KeyboardLayoutIcon    />
             {/* <TrayModule />  */}
             <WifiIcon />
             <BluetoothIcon />

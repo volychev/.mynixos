@@ -66,7 +66,9 @@
 
     # Theme
     bibata-cursors
-    colloid-icon-theme
+    # colloid-icon-theme
+    whitesur-gtk-theme
+    whitesur-icon-theme
     
     # System
     pamixer        
@@ -74,6 +76,9 @@
     brightnessctl
     cliphist
     wl-clipboard
+    grim 
+    slurp
+    swappy
 
     # CPP
     clang
@@ -102,33 +107,39 @@
 
     extraPackages = with inputs.ags.packages.${pkgs.system}; [
       astal4      
-      io          # Базовый ввод-вывод
-      apps        # Список приложений
-      battery     # Батарея
-      mpris       # Плеер
-      network     # Сеть
-      tray        # Трей
-      wireplumber # Звук
+      io          
+      apps        
+      battery     
+      network     
+      tray        
+      wireplumber
       bluetooth
     ];
   };
 
   home.sessionVariables = {
     NIXOS_OZONE_WL = "1";
-    _JAVA_AWT_WM_NONREPARENTING = "1";
     QT_QPA_PLATFORM = "wayland;xcb";
+    QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
+    QT_AUTO_SCREEN_SCALE_FACTOR = "1";
+    QT_SCALE_FACTOR_ROUNDING_POLICY = "PassThrough";
     SDL_VIDEODRIVER = "wayland";
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+    GTK_THEME = "WhiteSur-Dark"; 
   };
 
   gtk = {
     enable = true;
-    # theme = {
-    #   name = "WhiteSur-Dark";
-    #   package = pkgs.whitesur-gtk-theme;
-    # };
+    theme = {
+      name = "WhiteSur-Dark";
+      package = pkgs.whitesur-gtk-theme.override {
+        altVariants = [ "all" ];
+        themeVariants = [ "default" ];
+      };
+    };
     iconTheme = {
-      name = "Colloid-Dark";
-      package = pkgs.colloid-icon-theme;
+      name = "WhiteSur";
+      package = pkgs.whitesur-icon-theme;
     };
     cursorTheme = {
       name = "Bibata-Modern-Ice";
@@ -139,8 +150,12 @@
   dconf.settings = {
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
-      # gtk-theme = "WhiteSur-Dark";
-      icon-theme = "Colloid-Dark";
+      gtk-theme = "WhiteSur-Dark";
+      icon-theme = "WhiteSur";
+      cursor-theme = "Bibata-Modern-Ice";
+    };
+    "org/gnome/shell/extensions/user-theme" = {
+      name = "WhiteSur-Dark";
     };
   };
 

@@ -14,6 +14,8 @@
 	bind=SUPER,f,spawn,nautilus
 	bind=SUPER,w,spawn,kitty -- nmtui
 	bind=SUPER,b,spawn,blueman-manager
+	bind=SUPER,s,spawn,screenshot
+	bind=SUPER+Shift,s,spawn,screenshot
 	
 	# Gestures
 	gesturebind=none,right,3,viewtoleft

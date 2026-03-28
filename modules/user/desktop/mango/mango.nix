@@ -28,6 +28,23 @@ let
     fi
   '';
 
+  screenshot = pkgs.writeShellScriptBin "screenshot" ''
+    SLURP_ARGS="-b 00000066 -c 00000000 -B BFb4faff -w 2"
+    TEMP_IMG="/tmp/screenshot_$(date +%s).png"
+    GEOM=$(slurp $SLURP_ARGS)
+
+    if [ -z "$GEOM" ]; then
+        exit 0
+    fi
+
+    if grim -g "$GEOM" "$TEMP_IMG"; then
+        wl-copy --type image/png < "$TEMP_IMG"
+        swappy -f "$TEMP_IMG" && rm "$TEMP_IMG"
+    else
+        exit 1
+    fi
+  '';
+
   config = import ./modules/config.nix { inherit lib; };	
   keybinds = import ./modules/keybinds.nix { inherit lib; };
   visuals = import ./modules/visuals.nix { inherit lib; };
@@ -37,6 +54,7 @@ in {
   home.packages = with pkgs; [
     mmsg-scroll
     mmsg-layout-switch
+    screenshot
   ];
 
   imports = [
