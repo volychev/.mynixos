@@ -161,7 +161,7 @@ export default function Workspaces() {
             if (button.visible) {
                 button.cssClasses = ["tag-button", isActive ? "active" : ""];
 
-                if (isActive && focusedTitle) {
+                if (isActive && focusedTitle && isOccupied) {
                     title.visible = true;
                     title.label = focusedTitle.length > 30 
                         ? `${focusedTitle.substring(0, 30)}...` 

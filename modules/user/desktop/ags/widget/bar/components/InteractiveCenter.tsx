@@ -11,7 +11,6 @@ import { InteractiveCenterMode, subscribeInteractiveCenterRequests } from "./int
 const INTERACTIVE_MODES: InteractiveCenterMode[] = ["search", "clipboard", "notifications"];
 type FocusWindow = Gtk.Window & { keymode?: Astal.Keymode };
 const MAX_APPLICATION_RESULTS = 20;
-const INTERACTIVE_FOCUS_GRACE_US = 420_000;
 
 function clearBoxChildren(box: Gtk.Box) {
     let child = box.get_first_child();
@@ -145,18 +144,6 @@ function ensureFocusedInput(entry: Gtk.Entry) {
     setWindowKeymode(entry, Astal.Keymode.EXCLUSIVE);
 }
 
-function isRootWindowActive(root: Gtk.Root | null) {
-    if (!(root instanceof Gtk.Window)) {
-        return false;
-    }
-    if ("is_active" in root && typeof root.is_active === "function") {
-        return root.is_active();
-    }
-
-    const activeProperty = root.get_property("is-active");
-    return typeof activeProperty === "boolean" ? activeProperty : true;
-}
-
 export default function InteractiveCenter() {
     const stack = new Gtk.Stack();
     stack.transition_type = Gtk.StackTransitionType.SLIDE_UP_DOWN;
@@ -168,9 +155,6 @@ export default function InteractiveCenter() {
     let searchBlurTimeout: number | null = null;
     let clipboardBlurTimeout: number | null = null;
     let notificationsBlurTimeout: number | null = null;
-    let interactiveFocusWatchTimeout: number | null = null;
-    let interactiveFocusWatchMode: InteractiveCenterMode | null = null;
-    let interactiveFocusWatchGraceUntilUs = 0;
 
     let lastVolumeValue = -1;
     let lastMuteState = false;
@@ -226,78 +210,6 @@ export default function InteractiveCenter() {
             notificationsPopover.set_visible(false);
             setWindowKeymode(notificationsBox, Astal.Keymode.ON_DEMAND);
         }
-        if (state !== "search" && state !== "clipboard" && state !== "notifications") {
-            interactiveFocusWatchTimeout = clearTimeoutSource(interactiveFocusWatchTimeout);
-            interactiveFocusWatchMode = null;
-            interactiveFocusWatchGraceUntilUs = 0;
-        }
-    };
-
-    const focusInsideMode = (mode: InteractiveCenterMode) => {
-        const root = stack.get_root();
-        if (!(root instanceof Gtk.Window)) {
-            return false;
-        }
-        const focusedWidget = root.get_focus();
-        if (!focusedWidget) {
-            return false;
-        }
-        if (mode === "search") {
-            return isDescendantOf(focusedWidget, searchBox) || isDescendantOf(focusedWidget, applicationPopover);
-        }
-        if (mode === "clipboard") {
-            return isDescendantOf(focusedWidget, clipboardBox) || isDescendantOf(focusedWidget, clipboardPopover);
-        }
-        return isDescendantOf(focusedWidget, notificationsBox) || isDescendantOf(focusedWidget, notificationsPopover);
-    };
-
-    const closeInteractiveMode = (mode: InteractiveCenterMode) => {
-        if (mode === "search") {
-            clearApplicationSearch();
-            showState(defaultInteractiveMode);
-            setWindowKeymode(searchEntry, Astal.Keymode.ON_DEMAND);
-            clearWindowFocus(searchEntry);
-            return;
-        }
-        if (mode === "clipboard") {
-            clearClipboardSearch();
-            showState(defaultInteractiveMode);
-            setWindowKeymode(clipboardEntry, Astal.Keymode.ON_DEMAND);
-            clearWindowFocus(clipboardEntry);
-            return;
-        }
-        closeNotificationsPopover();
-    };
-
-    const startInteractiveFocusWatch = (mode: InteractiveCenterMode, graceUs = INTERACTIVE_FOCUS_GRACE_US) => {
-        interactiveFocusWatchMode = mode;
-        interactiveFocusWatchGraceUntilUs = GLib.get_monotonic_time() + graceUs;
-        interactiveFocusWatchTimeout = clearTimeoutSource(interactiveFocusWatchTimeout);
-        interactiveFocusWatchTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 90, () => {
-            if (interactiveFocusWatchMode !== mode || stack.get_visible_child_name() !== mode) {
-                interactiveFocusWatchTimeout = null;
-                return GLib.SOURCE_REMOVE;
-            }
-
-            const root = stack.get_root();
-            const windowActive = isRootWindowActive(root);
-            const modeFocused = focusInsideMode(mode);
-
-            if (windowActive && modeFocused) {
-                interactiveFocusWatchGraceUntilUs = 0;
-                return GLib.SOURCE_CONTINUE;
-            }
-
-            if (interactiveFocusWatchGraceUntilUs !== 0 && GLib.get_monotonic_time() < interactiveFocusWatchGraceUntilUs) {
-                return GLib.SOURCE_CONTINUE;
-            }
-
-            closeInteractiveMode(mode);
-            interactiveFocusWatchTimeout = null;
-            interactiveFocusWatchMode = null;
-            interactiveFocusWatchGraceUntilUs = 0;
-            return GLib.SOURCE_REMOVE;
-        });
     };
 
     const updateApplicationSelection = () => {
@@ -460,18 +372,9 @@ export default function InteractiveCenter() {
         }
     });
 
-    searchEntry.connect("notify::has-focus", () => {
-        if (searchEntry.has_focus) {
-            searchBlurTimeout = clearTimeoutSource(searchBlurTimeout);
-            return;
-        }
-
-        startInteractiveFocusWatch("search");
-    });
-
     const searchKeyController = new Gtk.EventControllerKey();
     searchKeyController.connect("key-pressed", (_controller, keyValue) => {
-        if (keyValue === Gdk.KEY_Escape) {
+        if (keyValue === Gdk.KEY_Escape || keyValue === Gdk.KEY_Tab || keyValue === Gdk.KEY_ISO_Left_Tab) {
             clearApplicationSearch();
             searchEntry.set_text("");
             showState(defaultInteractiveMode);
@@ -651,18 +554,15 @@ export default function InteractiveCenter() {
         });
     });
 
-    clipboardEntry.connect("notify::has-focus", () => {
-        if (clipboardEntry.has_focus) {
-            clipboardBlurTimeout = clearTimeoutSource(clipboardBlurTimeout);
-            return;
+    clipboardEntry.connect("activate", () => {
+        if (clipboardActions[clipboardIndex]) {
+            clipboardActions[clipboardIndex]();
         }
-
-        startInteractiveFocusWatch("clipboard");
     });
 
     const clipboardKeyController = new Gtk.EventControllerKey();
     clipboardKeyController.connect("key-pressed", (_controller, keyValue) => {
-        if (keyValue === Gdk.KEY_Escape) {
+        if (keyValue === Gdk.KEY_Escape || keyValue === Gdk.KEY_Tab || keyValue === Gdk.KEY_ISO_Left_Tab) {
             clearClipboardSearch();
             clipboardEntry.set_text("");
             showState(defaultInteractiveMode);
@@ -837,7 +737,6 @@ export default function InteractiveCenter() {
             if (focusInput) {
                 ensureFocusedInput(searchEntry);
             }
-            startInteractiveFocusWatch("search", focusInput ? 700_000 : INTERACTIVE_FOCUS_GRACE_US);
             return;
         }
 
@@ -847,14 +746,12 @@ export default function InteractiveCenter() {
             if (focusInput) {
                 ensureFocusedInput(clipboardEntry);
             }
-            startInteractiveFocusWatch("clipboard", focusInput ? 700_000 : INTERACTIVE_FOCUS_GRACE_US);
             return;
         }
 
         updateNotifications();
         notificationsPopover.set_visible(true);
         focusWidget(notificationsBox, false);
-        startInteractiveFocusWatch("notifications");
     };
 
     const searchIconClick = new Gtk.GestureClick();
@@ -881,13 +778,10 @@ export default function InteractiveCenter() {
     });
     notificationsLabel.add_controller(notificationsLabelClick);
     notificationsBox.set_focusable(true);
-    notificationsBox.connect("notify::has-focus", () => {
-        startInteractiveFocusWatch("notifications");
-    });
 
     const notificationsKeyController = new Gtk.EventControllerKey();
     notificationsKeyController.connect("key-pressed", (_controller, keyValue) => {
-        if (keyValue === Gdk.KEY_Escape) {
+        if (keyValue === Gdk.KEY_Escape || keyValue === Gdk.KEY_Tab || keyValue === Gdk.KEY_ISO_Left_Tab) {
             closeNotificationsPopover();
             return true;
         }
@@ -895,12 +789,6 @@ export default function InteractiveCenter() {
         return false;
     });
     notificationsBox.add_controller(notificationsKeyController);
-
-    const notificationsPopoverFocusController = new Gtk.EventControllerFocus();
-    notificationsPopoverFocusController.connect("leave", () => {
-        startInteractiveFocusWatch("notifications");
-    });
-    notificationsPopover.add_controller(notificationsPopoverFocusController);
 
     const volumeIcon = <label cssClasses={["zone-icon"]} label="􀊩" /> as Gtk.Label;
     const volumeFill = <box cssClasses={["osd-fill"]} /> as Gtk.Box;
@@ -1058,9 +946,6 @@ export default function InteractiveCenter() {
     });
     interactiveCenterContainer.connect("notify::root", () => {
         if (!interactiveCenterContainer.get_root()) {
-            interactiveFocusWatchTimeout = clearTimeoutSource(interactiveFocusWatchTimeout);
-            interactiveFocusWatchMode = null;
-            interactiveFocusWatchGraceUntilUs = 0;
             unsubscribeRequestHandler();
         }
     });
