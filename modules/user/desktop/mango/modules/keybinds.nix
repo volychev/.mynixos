@@ -1,11 +1,9 @@
 { lib }:
 ''
-	# System
 	bind=SUPER,Space,spawn,kitty
 	bind=SUPER,x,killclient
 	bind=SUPER,Escape,spawn,mmsg-layout-switch
 
-	# Applications
 	bind=SUPER,z,spawn,zen-beta
 	bind=SUPER,t,spawn,Telegram
 	bind=SUPER,o,spawn,obsidian
@@ -16,8 +14,7 @@
 	bind=SUPER,b,spawn,blueman-manager
 	bind=SUPER,s,spawn,screenshot
 	bind=SUPER+Shift,s,spawn,screenshot
-	
-	# Gestures
+
 	gesturebind=none,right,3,viewtoleft
 	gesturebind=none,left,3,viewtoright
 	gesturebind=none,up,3,spawn,mmsg-scroll up
@@ -29,7 +26,6 @@
 	gesturebind=none,up,4,toggleoverview
 	gesturebind=none,down,4,toggleoverview
 
-	# Media
 	bind=NONE,XF86MonBrightnessUp,spawn,brightnessctl set 2%+
 	bind=SHIFT,XF86MonBrightnessUp,spawn,brightnessctl set 100%
 	bind=NONE,XF86MonBrightnessDown,spawn,brightnessctl set 2%-
@@ -39,8 +35,7 @@
 	bind=NONE,XF86AudioLowerVolume,spawn,wpctl set-volume @DEFAULT_SINK@ 5%-
 	bind=NONE,XF86AudioMute,spawn,wpctl set-mute @DEFAULT_SINK@ toggle
 	bind=SHIFT,XF86AudioMute,spawn,wpctl set-mute @DEFAULT_SOURCE@ toggle
-	
-	# Tags
+
 	bind=SUPER,1,view,1
 	bind=SUPER,2,view,2
 	bind=SUPER,3,view,3

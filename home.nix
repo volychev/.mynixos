@@ -11,7 +11,7 @@
     ./modules/user/cli/git.nix
     ./modules/user/applications/zen.nix
     ./modules/user/development/vscode.nix
-    ./modules/user/development/jetbrains/jetbrains.nix 
+    ./modules/user/development/jetbrains/jetbrains.nix
   ];
 
   home = {
@@ -20,14 +20,14 @@
     stateVersion = "25.11";
   };
 
-  home.packages = with pkgs; [  
+  home.packages = with pkgs; [
     # Desktop
-    kitty 
-    swww
+    kitty
+    awww
 
     # CLI
     btop
-    
+
     # GNOME
     gnome-calculator
     gnome-clocks
@@ -47,12 +47,14 @@
     switcheroo
 
     # Social
-    telegram-desktop 
+    telegram-desktop
     discord
 
     # Development
     vscode-fhs
-    # jetbrains.IDE in ./home/jetbrains/jetbrains.nix 
+    # jetbrains.IDE in ./home/jetbrains/jetbrains.nix
+    zed-editor
+    logisim-evolution
 
     # Editors
     micro
@@ -69,14 +71,14 @@
     # colloid-icon-theme
     whitesur-gtk-theme
     whitesur-icon-theme
-    
+
     # System
-    pamixer        
-    pavucontrol     
+    pamixer
+    pavucontrol
     brightnessctl
     cliphist
     wl-clipboard
-    grim 
+    grim
     slurp
     swappy
 
@@ -97,21 +99,21 @@
     poetry
 
     # Java
-    jdk21 
+    jdk21
     gradle
   ];
 
   programs.ags = {
     enable = true;
-    configDir = ./modules/user/desktop/ags; 
+    configDir = ./modules/user/desktop/ags;
 
-    extraPackages = with inputs.ags.packages.${pkgs.system}; [
-      astal4      
-      io          
-      apps        
-      battery     
-      network     
-      tray        
+    extraPackages = with inputs.ags.packages.${pkgs.stdenv.hostPlatform.system}; [
+      astal4
+      io
+      apps
+      battery
+      network
+      tray
       wireplumber
       bluetooth
     ];
@@ -129,6 +131,7 @@
 
   gtk = {
     enable = true;
+    gtk4.theme = config.gtk.theme;
     theme = {
       name = "WhiteSur-Dark";
       package = pkgs.whitesur-gtk-theme;
@@ -154,8 +157,8 @@
 
   qt = {
     enable = true;
-    platformTheme.name = "gtk"; 
-    style.name = "adwaita-dark"; 
+    platformTheme.name = "gtk";
+    style.name = "adwaita-dark";
   };
 
   programs.home-manager.enable = true;

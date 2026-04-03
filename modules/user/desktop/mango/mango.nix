@@ -2,7 +2,7 @@
 let
   mmsg-scroll = pkgs.writeShellScriptBin "mmsg-scroll" ''
     OUTPUT=$(mmsg -g -l | tr -d '[:space:]')
-    
+
     LAST_CHAR=''${OUTPUT: -1}
 
     if [ "$LAST_CHAR" = "S" ]; then
@@ -18,7 +18,7 @@ let
 
   mmsg-layout-switch = pkgs.writeShellScriptBin "mmsg-layout-switch" ''
     OUTPUT=$(mmsg -g -l | tr -d '[:space:]')
-    
+
     LAST_CHAR=''${OUTPUT: -1}
 
     if [ "$LAST_CHAR" = "S" ]; then
@@ -45,10 +45,10 @@ let
     fi
   '';
 
-  config = import ./modules/config.nix { inherit lib; };	
+  mangoConfig = import ./modules/config.nix { inherit lib; };
   keybinds = import ./modules/keybinds.nix { inherit lib; };
   visuals = import ./modules/visuals.nix { inherit lib; };
-  layout = import ./modules/layout.nix { inherit lib; };	
+  layout = import ./modules/layout.nix { inherit lib; };
   autostart = import ./modules/autostart.nix { inherit lib; };
 in {
   home.packages = with pkgs; [
@@ -60,13 +60,13 @@ in {
   imports = [
     inputs.mango.hmModules.mango
   ];
-  
+
   wayland.windowManager.mango = {
     enable = true;
 
-    settings = lib.concatStringsSep "\n" [
-      config
-      keybinds	
+    extraConfig = lib.concatStringsSep "\n" [
+      mangoConfig
+      keybinds
       layout
       visuals
       autostart

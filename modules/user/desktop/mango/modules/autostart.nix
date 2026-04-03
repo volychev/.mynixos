@@ -1,7 +1,7 @@
 { lib }:
 ''
-	exec=swww-daemon
-	exec=swww img ${../wallpaper.png} --transition-step 255
+	exec=awww-daemon
+	exec=awww img ${../wallpaper.png} --transition-step 255
 	exec=sudo touchscreen-innhibit
 	exec-once=ags run ${../../ags}
 	exec-once=kitty &

@@ -1,9 +1,9 @@
 { config, pkgs, ... }:
 
-{ 
+{
   environment.systemPackages = with pkgs; [
-    curl 
-    wget 
+    curl
+    wget
     socat
     jq
     duf
@@ -11,7 +11,7 @@
     docker-compose
     ntfs3g
     udiskie
-    nbfc-linux
+    # nbfc-linux
   ];
 
   programs = {
@@ -39,26 +39,26 @@
   };
 
   services = {
-    xserver.xkb = { 
-      layout = "us,ru"; 
+    xserver.xkb = {
+      layout = "us,ru";
       variant = "";
-      options = "grp:alt_shift_toggle"; 
+      options = "grp:alt_shift_toggle";
     };
-    
-    displayManager.sddm = { 
-      enable = true; 
-      wayland.enable = true; 
-      # settings.Theme = "sugar-candy"; 
+
+    displayManager.sddm = {
+      enable = true;
+      wayland.enable = true;
+      # settings.Theme = "sugar-candy";
     };
-    
-    dbus.implementation = "broker"; 
+
+    dbus.implementation = "broker";
     gvfs.enable = true;
     upower.enable = true;
     openssh.enable = false;
     # printing.enable = false;
     blueman.enable = true;
-    fstrim.enable = true; 
-    libinput.enable = true; 
+    fstrim.enable = true;
+    libinput.enable = true;
     udisks2.enable = true;
 
     pipewire = {
@@ -72,8 +72,8 @@
 
   xdg.portal = {
     enable = true;
-    wlr.enable = true; 
-    extraPortals = [ 
+    wlr.enable = true;
+    extraPortals = [
       pkgs.xdg-desktop-portal-gtk
       pkgs.xdg-desktop-portal-wlr
     ];
