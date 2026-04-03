@@ -63,6 +63,9 @@
     figma-linux
     typst
 
+    # AI
+    github-copilot-cli
+
     # Networking
     throne
 
@@ -116,6 +119,7 @@
       tray
       wireplumber
       bluetooth
+      notifd
     ];
   };
 

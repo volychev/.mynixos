@@ -24,6 +24,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
       keymode={Astal.Keymode.ON_DEMAND}
       anchor={TOP | LEFT | RIGHT}
       focusable={true}
+      heightRequest={31}
       application={app}
     >
       <centerbox
@@ -53,4 +54,3 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
     </window>;
   return window;
 }
-

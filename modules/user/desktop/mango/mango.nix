@@ -28,6 +28,15 @@ let
     fi
   '';
 
+  ags-interactive-center = pkgs.writeShellScriptBin "ags-interactive-center" ''
+    MODE="$1"
+    if [ -z "$MODE" ]; then
+      exit 1
+    fi
+
+    ags request --instance ags interactive-center "$MODE"
+  '';
+
   screenshot = pkgs.writeShellScriptBin "screenshot" ''
     SLURP_ARGS="-b 00000066 -c 00000000 -B BFb4faff -w 2"
     TEMP_IMG="/tmp/screenshot_$(date +%s).png"
@@ -54,6 +63,7 @@ in {
   home.packages = with pkgs; [
     mmsg-scroll
     mmsg-layout-switch
+    ags-interactive-center
     screenshot
   ];
 
