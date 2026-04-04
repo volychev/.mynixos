@@ -12,6 +12,7 @@ import InteractiveCenter from "./components/InteractiveCenter"
 import BluetoothIcon from "./components/Bluetooth"
 import TrayModule from "./components/Tray"
 import KeyboardLayoutIcon from "./components/KeyboardLayout"
+import PowerModeIcon from "./components/PowerMode"
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
@@ -47,6 +48,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             <VpnIndicator />
             <BluetoothIcon />
             <AudioIcon />
+            <PowerModeIcon />
             <BatteryIcon />
             <Separator />
             <Clock />

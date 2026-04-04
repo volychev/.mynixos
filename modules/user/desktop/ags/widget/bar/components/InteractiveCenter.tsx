@@ -6,7 +6,12 @@ import GLib from "gi://GLib";
 import Gio from "gi://Gio";
 import Battery from "gi://AstalBattery";
 import Gdk from "gi://Gdk";
-import { InteractiveCenterMode, subscribeInteractiveCenterRequests } from "./interactiveCenterControl";
+import {
+    InteractiveCenterMode,
+    PowerModeName,
+    subscribeInteractiveCenterRequests,
+    subscribePowerModeRequests,
+} from "./interactiveCenterControl";
 
 type FocusWindow = Gtk.Window & { keymode?: Astal.Keymode };
 const MAX_APPLICATION_RESULTS = 40;
@@ -161,7 +166,7 @@ export default function InteractiveCenter() {
     let activeInteractiveMode: InteractiveCenterMode = "search";
 
     const showState = (
-        state: "search" | "clipboard" | "notifications" | "volume" | "brightness" | "battery",
+        state: "search" | "clipboard" | "notifications" | "volume" | "brightness" | "battery" | "power-mode",
     ) => {
         displayTimeout = clearTimeoutSource(displayTimeout);
 
@@ -920,6 +925,43 @@ export default function InteractiveCenter() {
     }
 
     stack.add_named(batteryBox, "battery");
+
+    const powerModeIcon = <label cssClasses={["zone-icon"]} label="􁁔" /> as Gtk.Label;
+    const powerModeLabel = <label cssClasses={["zone-text"]} label="Balanced" /> as Gtk.Label;
+    const powerModeBox = (
+        <box cssClasses={["interactive-zone-box", "active"]} halign={Gtk.Align.CENTER}>
+            {powerModeIcon}
+            {powerModeLabel}
+        </box>
+    ) as Gtk.Box;
+
+    const powerModeIcons: Record<PowerModeName, string> = {
+        "ultra-eco": "􁇌",
+        eco: "􁂬",
+        balanced: "􁁔",
+        performance: "􀋧",
+    };
+
+    const powerModeLabels: Record<PowerModeName, string> = {
+        "ultra-eco": "Ultra-Eco",
+        eco: "Eco",
+        balanced: "Balanced",
+        performance: "Performance",
+    };
+
+    let lastPowerMode: PowerModeName = "balanced";
+    const updatePowerModeInterface = (mode: PowerModeName, showOsd = true) => {
+        powerModeIcon.label = powerModeIcons[mode];
+        powerModeLabel.label = powerModeLabels[mode];
+
+        if (showOsd && lastPowerMode !== mode) {
+            showState("power-mode");
+        }
+        lastPowerMode = mode;
+    };
+
+    updatePowerModeInterface("balanced", false);
+    stack.add_named(powerModeBox, "power-mode");
     stack.set_visible_child_name(defaultInteractiveMode);
 
     const interactiveCenterContainer = (
@@ -931,9 +973,13 @@ export default function InteractiveCenter() {
     const unsubscribeRequestHandler = subscribeInteractiveCenterRequests((request) => {
         openInteractiveMode(request.mode, request.focusInput);
     });
+    const unsubscribePowerModeHandler = subscribePowerModeRequests((mode) => {
+        updatePowerModeInterface(mode);
+    });
     interactiveCenterContainer.connect("notify::root", () => {
         if (!interactiveCenterContainer.get_root()) {
             unsubscribeRequestHandler();
+            unsubscribePowerModeHandler();
         }
     });
 

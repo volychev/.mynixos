@@ -17,6 +17,10 @@
           command = "${pkgs.systemd}/bin/systemctl restart throne";
           options = [ "NOPASSWD" ];
         }
+        {
+          command = "/run/current-system/sw/bin/power-mode-apply";
+          options = [ "NOPASSWD" ];
+        }
       ];
     }
   ];

@@ -137,6 +137,15 @@ window.Bar {
     }
   }
 
+  .power-mode-icon {
+    font-family: "SF Pro Text", "SF Pro", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(#FFFFFF, 0.9);
+    text-shadow: 0 0 2px rgba(#000000, 0.25);
+    margin: 0 6px 0 2px;
+  }
+
   .layout-container {
     margin: 0 4px;
 

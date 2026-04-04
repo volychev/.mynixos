@@ -71,7 +71,7 @@
     libreoffice-qt
     figma-linux
     typst
-
+ghostty
     # AI
     github-copilot-cli
 

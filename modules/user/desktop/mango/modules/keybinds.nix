@@ -17,6 +17,7 @@
 	bind=SUPER+Shift,s,spawn,screenshot
 	bind=SUPER,r,spawn,ags-interactive-center search
 	bind=SUPER,v,spawn,ags-interactive-center clipboard
+	bind=SUPER,p,spawn,power-mode next
 
 	gesturebind=none,right,3,viewtoleft
 	gesturebind=none,left,3,viewtoright
