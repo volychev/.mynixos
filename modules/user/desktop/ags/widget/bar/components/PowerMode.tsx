@@ -5,10 +5,10 @@ import Gio from "gi://Gio"
 type PowerModeName = "ultra-eco" | "eco" | "balanced" | "performance"
 
 const iconByMode: Record<PowerModeName, string> = {
-  "ultra-eco": "􁇌",
-  eco: "􁂬",
-  balanced: "􁁔",
-  performance: "􀋧",
+  "ultra-eco": "􀇥",
+  eco: "􀥳",
+  balanced: "􀊵",
+  performance: "􀋦",
 }
 
 function normalizeMode(raw: string): PowerModeName {

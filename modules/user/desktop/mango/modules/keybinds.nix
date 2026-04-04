@@ -17,7 +17,7 @@
 	bind=SUPER+Shift,s,spawn,screenshot
 	bind=SUPER,r,spawn,ags-interactive-center search
 	bind=SUPER,v,spawn,ags-interactive-center clipboard
-	bind=SUPER,p,spawn,power-mode next
+	bind=SUPER,p,spawn,power-mode-keychord-enter
 
 	gesturebind=none,right,3,viewtoleft
 	gesturebind=none,left,3,viewtoright
@@ -60,4 +60,16 @@
 	bind=SUPER+SHIFT,7,tag,7
 	bind=SUPER+SHIFT,8,tag,8
 	bind=SUPER+SHIFT,9,tag,9
+
+	keymode=power
+	bind=SUPER,1,spawn,power-mode-keychord-select 1
+	bind=SUPER,2,spawn,power-mode-keychord-select 2
+	bind=SUPER,3,spawn,power-mode-keychord-select 3
+	bind=SUPER,4,spawn,power-mode-keychord-select 4
+	bind=NONE,1,spawn,power-mode-keychord-select 1
+	bind=NONE,2,spawn,power-mode-keychord-select 2
+	bind=NONE,3,spawn,power-mode-keychord-select 3
+	bind=NONE,4,spawn,power-mode-keychord-select 4
+	bind=NONE,Escape,setkeymode,default
+	keymode=default
 ''

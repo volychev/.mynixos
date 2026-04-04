@@ -936,10 +936,10 @@ export default function InteractiveCenter() {
     ) as Gtk.Box;
 
     const powerModeIcons: Record<PowerModeName, string> = {
-        "ultra-eco": "􁇌",
-        eco: "􁂬",
-        balanced: "􁁔",
-        performance: "􀋧",
+        "ultra-eco": "􀇥",
+        eco: "􀥳",
+        balanced: "􀊵",
+        performance: "􀋦",
     };
 
     const powerModeLabels: Record<PowerModeName, string> = {
