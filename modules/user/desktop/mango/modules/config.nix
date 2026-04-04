@@ -1,5 +1,6 @@
 { lib }:
 ''
+    env=DISPLAY,:11
     monitorrule=name:^eDP-1$,width:2880,height:1800,refresh:120,scale:1.8,vrr=0
 
     syncobj_enable=1

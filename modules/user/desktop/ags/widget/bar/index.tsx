@@ -5,6 +5,7 @@ import BatteryIcon from "./components/Battery"
 import Clock from "./components/Clock"
 import Separator from "./components/Separator"
 import WifiIcon from "./components/Network"
+import VpnIndicator from "./components/Vpn"
 import AudioIcon from "./components/Audio"
 import Workspaces from "./components/Apps"
 import InteractiveCenter from "./components/InteractiveCenter"
@@ -14,7 +15,7 @@ import KeyboardLayoutIcon from "./components/KeyboardLayout"
 
 export default function Bar(gdkmonitor: Gdk.Monitor) {
   const { TOP, LEFT, RIGHT } = Astal.WindowAnchor
-  
+
   const window = <window
       visible
       name="bar"
@@ -43,6 +44,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
             <KeyboardLayoutIcon    />
             {/* <TrayModule />  */}
             <WifiIcon />
+            <VpnIndicator />
             <BluetoothIcon />
             <AudioIcon />
             <BatteryIcon />

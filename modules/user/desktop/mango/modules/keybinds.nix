@@ -12,6 +12,7 @@
 	bind=SUPER,f,spawn,nautilus
 	bind=SUPER,w,spawn,kitty -- nmtui
 	bind=SUPER,b,spawn,blueman-manager
+	bind=SUPER+Shift,T,spawn,screenshot-ocr
 	bind=SUPER,s,spawn,screenshot
 	bind=SUPER+Shift,s,spawn,screenshot
 	bind=SUPER,r,spawn,ags-interactive-center search

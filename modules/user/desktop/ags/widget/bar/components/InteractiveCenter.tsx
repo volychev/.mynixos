@@ -8,9 +8,8 @@ import Battery from "gi://AstalBattery";
 import Gdk from "gi://Gdk";
 import { InteractiveCenterMode, subscribeInteractiveCenterRequests } from "./interactiveCenterControl";
 
-const INTERACTIVE_MODES: InteractiveCenterMode[] = ["search", "clipboard", "notifications"];
 type FocusWindow = Gtk.Window & { keymode?: Astal.Keymode };
-const MAX_APPLICATION_RESULTS = 20;
+const MAX_APPLICATION_RESULTS = 40;
 
 function clearBoxChildren(box: Gtk.Box) {
     let child = box.get_first_child();
@@ -54,18 +53,6 @@ function clearWindowFocus(widget: Gtk.Widget) {
     if (root instanceof Gtk.Window) {
         root.set_focus(null);
     }
-}
-
-function isDescendantOf(widget: Gtk.Widget | null, ancestor: Gtk.Widget) {
-    let current = widget;
-    while (current) {
-        if (current === ancestor) {
-            return true;
-        }
-        current = current.get_parent();
-    }
-
-    return false;
 }
 
 function focusWidget(widget: Gtk.Widget, captureInput = true) {
@@ -236,8 +223,8 @@ export default function InteractiveCenter() {
     const applicationScrollWindow = new Gtk.ScrolledWindow({
         hscrollbar_policy: Gtk.PolicyType.NEVER,
         vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
-        min_content_height: 100,
-        max_content_height: 260,
+        min_content_height: 150,
+        max_content_height: 150,
     });
     applicationScrollWindow.set_child(applicationPopoverContent);
     applicationPopover.set_child(applicationScrollWindow);
@@ -438,8 +425,8 @@ export default function InteractiveCenter() {
     const clipboardScrollWindow = new Gtk.ScrolledWindow({
         hscrollbar_policy: Gtk.PolicyType.NEVER,
         vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
-        min_content_height: 100,
-        max_content_height: 360,
+        min_content_height: 190,
+        max_content_height: 190,
     });
     clipboardScrollWindow.set_child(clipboardContent);
 
@@ -504,7 +491,7 @@ export default function InteractiveCenter() {
                     const identifier = lineParts[0];
                     const textParts = lineParts.slice(1);
                     const rawText = textParts.join("\t") || "[ Image / Binary ]";
-                    const displayText = rawText.length > 52 ? `${rawText.slice(0, 52)}...` : rawText;
+                    const displayText = rawText.length > 32 ? `${rawText.slice(0, 32)}...` : rawText;
 
                     const clipboardAction = () => {
                         const quotedIdentifier = GLib.shell_quote(identifier);

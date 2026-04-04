@@ -11,20 +11,20 @@ export default function BluetoothIcon() {
         icon.valign = Gtk.Align.CENTER;
 
         if (bluetooth.is_powered && bluetooth.is_connected) {
-            icon.label = "􁄡"; 
+            icon.label = "􁄡";
             icon.remove_css_class("disabled");
         } else {
-            icon.label = ""; 
+            icon.label = "";
             icon.add_css_class("disabled");
         }
     };
-    
+
     bluetooth.connect("notify::is-powered", update);
     bluetooth.connect("notify::is-connected", update);
 
     const clickController = new Gtk.GestureClick();
     clickController.connect("pressed", () => {
-        GLib.spawn_command_line_async("blueman-manager");
+        GLib.spawn_command_line_async("overskride");
     });
     icon.add_controller(clickController);
 

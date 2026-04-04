@@ -24,9 +24,12 @@
     # Desktop
     kitty
     awww
+    xwayland-satellite
 
     # CLI
     btop
+    inxi
+    acpi
 
     # GNOME
     gnome-calculator
@@ -40,11 +43,10 @@
     loupe
     snapshot
     amberol
-    binary
-    eyedropper
     hieroglyphic
     paper-clip
-    switcheroo
+    kooha
+    remmina
 
     # Social
     telegram-desktop
@@ -54,7 +56,14 @@
     vscode-fhs
     # jetbrains.IDE in ./home/jetbrains/jetbrains.nix
     zed-editor
+
+    # ITMO
+    anki
     logisim-evolution
+    iverilog
+    gtkwave
+    iverilog
+    verilator
 
     # Editors
     micro
@@ -66,14 +75,15 @@
     # AI
     github-copilot-cli
 
-    # Networking
+    # Networking / Bluetooth
     throne
+    overskride
 
     # Theme
     bibata-cursors
-    # colloid-icon-theme
+    colloid-icon-theme
     whitesur-gtk-theme
-    whitesur-icon-theme
+    # whitesur-icon-theme
 
     # System
     pamixer
@@ -84,6 +94,9 @@
     grim
     slurp
     swappy
+    zenity
+    tesseract
+    tesseract5
 
     # CPP
     clang
@@ -127,8 +140,10 @@
     NIXOS_OZONE_WL = "1";
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
-    QT_AUTO_SCREEN_SCALE_FACTOR = "1";
-    QT_SCALE_FACTOR_ROUNDING_POLICY = "PassThrough";
+    QT_ENABLE_HIGHDPI_SCALING = "1";
+    QT_AUTO_SCREEN_SCALE_FACTOR = "2";
+    QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
+    QT_SCALE_FACTOR="2.0";
     SDL_VIDEODRIVER = "wayland";
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };
@@ -141,8 +156,8 @@
       package = pkgs.whitesur-gtk-theme;
     };
     iconTheme = {
-      name = "WhiteSur";
-      package = pkgs.whitesur-icon-theme;
+      name = "Colloid-Dark";
+      package = pkgs.colloid-icon-theme;
     };
     cursorTheme = {
       name = "Bibata-Modern-Ice";
@@ -154,7 +169,7 @@
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       gtk-theme = "WhiteSur-Dark";
-      icon-theme = "WhiteSur";
+      icon-theme = "Colloid-Dark";
       cursor-theme = "Bibata-Modern-Ice";
     };
   };
@@ -162,7 +177,7 @@
   qt = {
     enable = true;
     platformTheme.name = "gtk";
-    style.name = "adwaita-dark";
+    style.name = "WhiteSur-Dark";
   };
 
   programs.home-manager.enable = true;

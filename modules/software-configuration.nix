@@ -56,7 +56,7 @@
     upower.enable = true;
     openssh.enable = false;
     # printing.enable = false;
-    blueman.enable = true;
+    # blueman.enable = false;
     fstrim.enable = true;
     libinput.enable = true;
     udisks2.enable = true;
