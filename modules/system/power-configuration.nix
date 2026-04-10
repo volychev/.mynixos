@@ -188,6 +188,9 @@ in
 
         DISK_DEVICES = "nvme0n1";
         DISK_IOSCHED = "none";
+
+        START_CHARGE_THRESH_BAT0 = 90;
+        STOP_CHARGE_THRESH_BAT0 = 100;
       };
     };
 

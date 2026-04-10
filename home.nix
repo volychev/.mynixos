@@ -74,6 +74,7 @@
 
     # AI
     github-copilot-cli
+    gemini-cli
 
     # Networking / Bluetooth
     throne
@@ -97,6 +98,8 @@
     zenity
     tesseract
     tesseract5
+    qt6.qtwayland
+    libsForQt5.qt5.qtwayland
 
     # CPP
     clang
@@ -117,6 +120,9 @@
     # Java
     jdk21
     gradle
+
+    # Go
+    go
   ];
 
   programs.ags = {
@@ -141,9 +147,8 @@
     QT_QPA_PLATFORM = "wayland;xcb";
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     QT_ENABLE_HIGHDPI_SCALING = "1";
-    QT_AUTO_SCREEN_SCALE_FACTOR = "2";
+    QT_AUTO_SCREEN_SCALE_FACTOR = "1";
     QT_SCALE_FACTOR_ROUNDING_POLICY = "RoundPreferFloor";
-    QT_SCALE_FACTOR="2.0";
     SDL_VIDEODRIVER = "wayland";
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };

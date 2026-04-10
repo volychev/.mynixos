@@ -10,7 +10,6 @@
 	exec-once=Throne &
 	exec-once=power-mode restore --quiet &
 	exec-once=power-mode-daemon &
-	exec-once=screen-idle-daemon &
 	exec-once=wl-paste --type text --watch cliphist store
 	exec-once=wl-paste --type image --watch cliphist store
 ''

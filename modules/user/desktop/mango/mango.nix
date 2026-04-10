@@ -17,7 +17,6 @@ in {
     desktopScripts.screenshot-ocr
     powerScripts.animate-brightness
     powerScripts.power-mode
-    powerScripts.screen-idle-daemon
     powerScripts.power-mode-keychord-enter
     powerScripts.power-mode-keychord-select
     wlr-randr

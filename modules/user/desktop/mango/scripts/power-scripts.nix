@@ -35,87 +35,6 @@ let
     done
   '';
 
-  screen-idle-dim-brightness = pkgs.writeShellScriptBin "screen-idle-dim-brightness" ''
-    set -eu
-
-    STATE_DIR="''${XDG_RUNTIME_DIR:-/tmp}/screen-idle-daemon"
-    BRIGHTNESS_FILE="$STATE_DIR/brightness-before-dim"
-    BC_BIN="${pkgs.brightnessctl}/bin/brightnessctl"
-    ANIMATE_BIN="${animate-brightness}/bin/animate-brightness"
-    TARGET_PERCENT="''${SCREEN_IDLE_DIM_TARGET_PERCENT:-1}"
-
-    mkdir -p "$STATE_DIR"
-
-    case "$TARGET_PERCENT" in
-      *[!0-9]*)
-        echo "SCREEN_IDLE_DIM_TARGET_PERCENT must be an integer between 1 and 100." >&2
-        exit 1
-        ;;
-    esac
-
-    if [ -z "$TARGET_PERCENT" ]; then
-      echo "SCREEN_IDLE_DIM_TARGET_PERCENT must be an integer between 1 and 100." >&2
-      exit 1
-    fi
-
-    if [ "$TARGET_PERCENT" -lt 1 ] || [ "$TARGET_PERCENT" -gt 100 ]; then
-      echo "SCREEN_IDLE_DIM_TARGET_PERCENT must be between 1 and 100." >&2
-      exit 1
-    fi
-
-    max="$($BC_BIN m)"
-    current="$($BC_BIN g)"
-    if [ "$max" -le 0 ]; then
-      echo "brightnessctl returned an invalid max brightness value." >&2
-      exit 1
-    fi
-
-    current_pct=$(( current * 100 / max ))
-    if [ "$current_pct" -le "$TARGET_PERCENT" ]; then
-      exit 0
-    fi
-
-    # Save latest user brightness every dim cycle, so restore always returns
-    # to the value before current idle dim.
-    printf '%s\n' "$current_pct" > "$BRIGHTNESS_FILE"
-    "$ANIMATE_BIN" "$TARGET_PERCENT"
-  '';
-
-  screen-idle-restore-brightness = pkgs.writeShellScriptBin "screen-idle-restore-brightness" ''
-    set -eu
-
-    STATE_DIR="''${XDG_RUNTIME_DIR:-/tmp}/screen-idle-daemon"
-    BRIGHTNESS_FILE="$STATE_DIR/brightness-before-dim"
-    ANIMATE_BIN="${animate-brightness}/bin/animate-brightness"
-
-    if [ ! -r "$BRIGHTNESS_FILE" ]; then
-      exit 0
-    fi
-
-    saved_pct="$(tr -d '[:space:]' < "$BRIGHTNESS_FILE")"
-    rm -f "$BRIGHTNESS_FILE"
-
-    case "$saved_pct" in
-      *[!0-9]*)
-        echo "Stored idle brightness value is invalid: '$saved_pct'." >&2
-        exit 1
-        ;;
-    esac
-
-    if [ -z "$saved_pct" ]; then
-      echo "Stored idle brightness value is invalid: empty value." >&2
-      exit 1
-    fi
-
-    if [ "$saved_pct" -lt 1 ]; then
-      saved_pct=1
-    elif [ "$saved_pct" -gt 100 ]; then
-      saved_pct=100
-    fi
-
-    "$ANIMATE_BIN" "$saved_pct"
-  '';
-
   power-mode = pkgs.writeShellScriptBin "power-mode" ''
     set -euo pipefail
 
@@ -458,75 +377,6 @@ PY
     esac
   '';
 
-  screen-idle-daemon = pkgs.writeShellScriptBin "screen-idle-daemon" ''
-    set -eu
-
-    POLL_INTERVAL="''${SCREEN_IDLE_POLL_INTERVAL:-2}"
-    PRE_DIM_SECONDS="''${SCREEN_IDLE_PRE_DIM_SECONDS:-15}"
-    SWAYIDLE_BIN="${pkgs.swayidle}/bin/swayidle"
-    WLOPM_BIN="${pkgs.wlopm}/bin/wlopm"
-    PRE_DIM_BIN="${screen-idle-dim-brightness}/bin/screen-idle-dim-brightness"
-    RESTORE_BRIGHTNESS_BIN="${screen-idle-restore-brightness}/bin/screen-idle-restore-brightness"
-
-    get_timeout_seconds() {
-      local mode
-      mode="$(power-mode get 2>/dev/null || echo balanced)"
-      power-mode idle-timeout "$mode" 2>/dev/null || echo "1800"
-    }
-
-    start_swayidle() {
-      local timeout="$1"
-      local dim_timeout
-      local -a swayidle_cmd=("$SWAYIDLE_BIN" -w)
-
-      if [ "$timeout" -gt "$PRE_DIM_SECONDS" ]; then
-        dim_timeout=$((timeout - PRE_DIM_SECONDS))
-        swayidle_cmd+=(
-          timeout "$dim_timeout" "$PRE_DIM_BIN"
-          resume "$RESTORE_BRIGHTNESS_BIN"
-        )
-      fi
-
-      swayidle_cmd+=(
-        timeout "$timeout" "$WLOPM_BIN --off '*'"
-        resume "$WLOPM_BIN --on '*' && $RESTORE_BRIGHTNESS_BIN"
-        before-sleep "$WLOPM_BIN --off '*'"
-      )
-
-      "''${swayidle_cmd[@]}" &
-      swayidle_pid="$!"
-    }
-
-    stop_swayidle() {
-      if [ -n "''${swayidle_pid:-}" ] && kill -0 "$swayidle_pid" 2>/dev/null; then
-        kill "$swayidle_pid"
-        wait "$swayidle_pid" 2>/dev/null || true
-      fi
-      swayidle_pid=""
-    }
-
-    cleanup() {
-      stop_swayidle
-    }
-
-    trap cleanup EXIT INT TERM
-
-    current_timeout=""
-    swayidle_pid=""
-
-    while true; do
-      timeout="$(get_timeout_seconds)"
-
-      if [ "$timeout" != "$current_timeout" ] || [ -z "$swayidle_pid" ] || ! kill -0 "$swayidle_pid" 2>/dev/null; then
-        stop_swayidle
-        start_swayidle "$timeout"
-        current_timeout="$timeout"
-      fi
-
-      sleep "$POLL_INTERVAL"
-    done
-  '';
-
   power-mode-keychord-enter = pkgs.writeShellScriptBin "power-mode-keychord-enter" ''
     set -eu
 
@@ -604,7 +454,6 @@ in {
   inherit
     animate-brightness
     power-mode
-    screen-idle-daemon
     power-mode-keychord-enter
     power-mode-keychord-select
     ;
