@@ -29,6 +29,7 @@
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     neocmakelsp
+    gopls
   ];
 
   virtualisation.docker = {
@@ -44,18 +45,6 @@
   };
 
   services = {
-    xserver.xkb = {
-      layout = "us,ru";
-      variant = "";
-      options = "grp:alt_shift_toggle";
-    };
-
-    displayManager.sddm = {
-      enable = true;
-      wayland.enable = true;
-      # settings.Theme = "sugar-candy";
-    };
-
     dbus.implementation = "broker";
     gvfs.enable = true;
     upower.enable = true;

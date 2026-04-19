@@ -1,8 +1,8 @@
 { config, pkgs, inputs, ... }:
 
-{ 
+{
   fonts.packages = with pkgs; [
-    corefonts 
+    corefonts
     vista-fonts
     inter
     inputs.apple-fonts.packages.${pkgs.system}.sf-pro

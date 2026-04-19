@@ -1,23 +1,25 @@
 { config, pkgs, inputs, lib, hostname, user, ... }:
 
 {
-  imports = [ 
-    ./hosts/${hostname}/hardware-configuration.nix 
-    ./hosts/${hostname}/boot-configuration.nix 
-    ./hosts/${hostname}/filesystem-configuration.nix 
-    ./hosts/${hostname}/system-configuration.nix 
+  imports = [
+    ./hosts/${hostname}/hardware-configuration.nix
+    ./hosts/${hostname}/boot-configuration.nix
+    ./hosts/${hostname}/filesystem-configuration.nix
+    ./hosts/${hostname}/system-configuration.nix
     ./modules/software-configuration.nix
     ./modules/system/networking-configuration.nix
     ./modules/system/power-configuration.nix
     ./modules/system/security-configuration.nix
     ./modules/user/desktop/font-configuration.nix
+
+    ./modules/user/desktop/mango/configuration.nix
   ];
-  
+
   users.users.${user} = {
     isNormalUser = true;
     description = "Kirill Volychev";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
-    shell = pkgs.fish; 
+    shell = pkgs.fish;
   };
 
   time.timeZone = "Europe/Moscow";

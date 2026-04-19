@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,7 +23,7 @@
       url = "github:aylur/ags";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     apple-fonts.url= "github:Lyndeno/apple-fonts.nix";
 
     zen-browser = {
@@ -44,8 +44,8 @@
         specialArgs = { inherit inputs hostname user; };
 
         modules = [
-          ./configuration.nix 
-          
+          ./configuration.nix
+
           inputs.home-manager.nixosModules.home-manager {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
